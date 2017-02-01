@@ -1,3 +1,5 @@
+https://g0rf.github.io/dickass
+
 index.html - original page served
 
 index.js - main game entry point
