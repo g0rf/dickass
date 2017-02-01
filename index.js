@@ -1,30 +1,24 @@
 
-class GameState extends Phaser.State {
-
-	init() {
-		const game = this.game;
+var mainState = function(game){};
+mainState.prototype = {
+	init: function() { // register keyboard inputs
 		this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
 		this.downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 		this.leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 		this.rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-	}
+	},
 
-	preload() {
-		this.game.load.image('pepe', 'assets/pepe.jpg');
-	}
+	preload: function() { // load pepe
+		game.load.image('pepe', 'assets/pepe.jpg');
+	},
 
-	create() {
-		let center = { x: this.game.world.centerX, y: this.game.world.centerY }
-		this.pepe = this.game.add.sprite(center.x, center.y, 'pepe');
-		this.game.physics.enable(this.pepe, Phaser.Physics.ARCADE);
-	}
+	create: function() { // add pepe as a sprite, with physics
+		this.pepe = this.game.add.sprite(game.world.centerX, game.world.centerY, 'pepe');
+		game.physics.enable(this.pepe, Phaser.Physics.ARCADE);
+	},
 
-	update() {
-		const v = 300; // movement speed
-
-		if (!this.pepe.body) {
-			return;
-		}
+	update: function() { // move pepe on keypress, stop him otherwise
+		var v = 300; // movement speed
 
 		if (this.upKey.isDown) {
 			this.pepe.body.velocity.y = -v;
@@ -46,16 +40,7 @@ class GameState extends Phaser.State {
 	}
 }
 
-
-
-class Game extends Phaser.Game {
-
-	constructor() {
-		super(500, 500, Phaser.AUTO, 'content', null);
-		this.state.add('GameState', GameState, false);
-		this.state.start('GameState');
-	}
-
-}
-
-new Game();
+// 500x500 screen, engine is Phaser.AUTO, id of the element to put this in
+var game = new Phaser.Game(500, 500, Phaser.AUTO, 'content', null);
+game.state.add('mainState', mainState, false);
+game.state.start('mainState');
