@@ -17,7 +17,7 @@ mainState.prototype = {
 		this.pepe = this.game.add.sprite(game.world.centerX, game.world.centerY, 'pepe');
 		game.physics.enable(this.pepe, Phaser.Physics.ARCADE);
         
-        this.john = this.game.add.sprite(game.world.centerX, game.world.centerY, 'john');
+        this.john = this.game.add.sprite(game.world.50, game.world.centerY, 'john');
 		game.physics.enable(this.john, Phaser.Physics.ARCADE);
 	},
 
