@@ -12,5 +12,4 @@ LICENSE - ignore this
 
 
 ## Assets
-
-![dickass](https://raw.githubusercontent.com/g0rf/dickass/master/assets/dickass.svg)
+[dickass](assets/dickass.svg)
