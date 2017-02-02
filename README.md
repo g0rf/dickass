@@ -9,3 +9,8 @@ assets - game assets like sprites n stuff
 phaser.min.js - phaser library
 
 LICENSE - ignore this
+
+
+## Assets
+
+![dickass](https://raw.githubusercontent.com/g0rf/dickass/master/assets/dickass.svg)
