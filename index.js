@@ -30,15 +30,13 @@ mainState.prototype = {
 		
 		platforms.enableBody = true;
 	
-		var ground = platforms.create(0, game.world.height - 64, 'ground');
-	
-		ground.scale.setTo(1, 1);
+		var ground = platforms.create(0, game.world.height - 32, 'ground');
 	
 		ground.body.immovable = true;
 
-		var ground2 = platforms.create(396, game.world.height - 64, 'ground');
+		var ground2 = platforms.create(396, game.world.height - 32, 'ground');
 		ground2.body.immovable = true;
-		var ground3 = platforms.create(396*2, game.world.height - 64, 'ground');
+		var ground3 = platforms.create(396*2, game.world.height - 32, 'ground');
 		ground3.body.immovable = true;
 		
 		
