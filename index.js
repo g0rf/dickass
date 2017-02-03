@@ -1,4 +1,5 @@
 var platforms;
+var music = new Audio("soulbossanova.mp3");
 var mainState = function(game){};
 mainState.prototype = {
 	init: function() { // register keyboard inputs
@@ -6,6 +7,7 @@ mainState.prototype = {
 		this.downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 		this.leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 		this.rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+
 	},
 
 	preload: function() { // load pepe
@@ -14,6 +16,7 @@ mainState.prototype = {
 		game.load.image('dickass', 'assets/dickass.svg');
 		game.load.image('sky', 'assets/sky.png');
 		game.load.image('ground', 'assets/platform.png');
+	
 
 	},
 	
@@ -66,6 +69,11 @@ mainState.prototype = {
 	update: function() { // move pepe on keypress, stop him otherwise
 		var v = 300; // movement speed
 		
+		var music = new Audio("soulbossanova.mp3");
+		
+		
+		//music.play();
+		
 		var hitPlatform = game.physics.arcade.collide(this.dickass, platforms);
 		
 			 //  Reset the players velocity (movement)
@@ -105,3 +113,4 @@ mainState.prototype = {
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', null);
 game.state.add('mainState', mainState, false);
 game.state.start('mainState');
+music.play();
