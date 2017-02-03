@@ -1,5 +1,5 @@
 var platforms;
-var music = new Audio("soulbossanova.mp3");
+var music = new Audio("assets/soulbossanova.mp3");
 var mainState = function(game){};
 mainState.prototype = {
 	init: function() { // register keyboard inputs
