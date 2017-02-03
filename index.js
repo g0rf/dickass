@@ -13,10 +13,10 @@ mainState.prototype = {
 	preload: function() { // load pepe
 		game.load.image('pepe', 'assets/pepe.jpg');
         game.load.image('john', 'assets/john.png');
-		game.load.image('dickass', 'assets/dickass.svg');
+		game.load.image('dickass', 'assets/dickass-pixel.png');
 		game.load.image('sky', 'assets/sky.png');
-		game.load.image('ground', 'assets/platform.png');
-	
+		game.load.image('ground', 'assets/platform-pixel.png');
+
 
 	},
 	
@@ -33,11 +33,14 @@ mainState.prototype = {
 		
 		platforms.enableBody = true;
 	
-		var ground = platforms.create(0, game.world.height - 64, 'ground');
-	
-		ground.scale.setTo(2, 2);
+		var ground = platforms.create(0, game.world.height - 32, 'ground');
 	
 		ground.body.immovable = true;
+
+		var ground2 = platforms.create(396, game.world.height - 32, 'ground');
+		ground2.body.immovable = true;
+		var ground3 = platforms.create(396*2, game.world.height - 32, 'ground');
+		ground3.body.immovable = true;
 		
 		
 		var ledge = platforms.create(450, 400, 'ground'); //right ledge
