@@ -1,5 +1,10 @@
 var platforms;
-var music = new Audio("assets/soulbossanova.mp3");
+
+var sounds = {
+	music:new Audio("assets/sounds/soulbossanova.mp3"),
+	jumpsound:new Audio("assets/sounds/badpoosy.mp3"),
+};
+
 var mainState = function(game){};
 mainState.prototype = {
 	init: function() { // register keyboard inputs
@@ -62,7 +67,8 @@ mainState.prototype = {
 		
 		this.dickass.scale.setTo(.8,.8);
 		
-		this.dickass.body.bounce.y = 0.5;
+		//mike doesn't like bounce that ass bounce bounce that ass
+		//this.dickass.body.bounce.y = 0.5;
 		this.dickass.body.gravity.y = 1000;
 		this.dickass.body.collideWorldBounds = true;
 		
@@ -71,11 +77,7 @@ mainState.prototype = {
 
 	update: function() { // move pepe on keypress, stop him otherwise
 		var v = 300; // movement speed
-		
-		var music = new Audio("soulbossanova.mp3");
-		
-		
-		//music.play();
+
 		
 		var hitPlatform = game.physics.arcade.collide(this.dickass, platforms);
 		
@@ -108,6 +110,8 @@ mainState.prototype = {
 		if (cursors.up.isDown && this.dickass.body.touching.down && hitPlatform)
 		{
 			this.dickass.body.velocity.y = -600;
+			sounds.jumpsound.play();
+		
 		}
 	}
 }
@@ -116,4 +120,6 @@ mainState.prototype = {
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', null);
 game.state.add('mainState', mainState, false);
 game.state.start('mainState');
-music.play();
+sounds.music.play();
+sounds.music.volume = .75;
+sounds.jumpsound.volume = 0.5;
