@@ -2,11 +2,43 @@ var platforms;
 
 var sounds = {
 	music:new Audio("assets/sounds/soulbossanova.mp3"),
-	jumpsound:new Audio("assets/sounds/badpoosy.mp3"),
+	jumpsound:new Audio("assets/sounds/badpoosy.mp3")
 };
 
 var mainState = function(game){};
+var titleState = function(game){};
+
+titleState.prototype = {
+	init: function() {
+		
+		upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+		
+	},
+	
+	preload: function () {
+		game.load.image('sky', 'assets/sky.png');
+	
+	},
+	
+	create: function () {
+		
+		game.add.sprite(0, 0, 'sky');
+		var titleScreen = game.add.text(230, 80, 'The Adventures of Dickass', {font:'25px Arial', fill: '#ffffff'});
+		
+		var howToStart = game.add.text(titleScreen.width, 120, 'Press up to start party', {font:'15px Arial', fill: '#ffffff'});
+		cursors = game.input.keyboard.createCursorKeys();
+	},
+	
+	update: function () {
+	
+		if (cursors.up.isDown) {
+			startGame();
+		}
+	}
+}
+
 mainState.prototype = {
+
 	init: function() { // register keyboard inputs
 		this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
 		this.downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
@@ -16,24 +48,23 @@ mainState.prototype = {
 	},
 
 	preload: function() { // load pepe
+		
 		game.load.image('pepe', 'assets/pepe.jpg');
         game.load.image('john', 'assets/john.png');
 		game.load.image('dickass', 'assets/dickass-pixel.png');
 		game.load.image('sky', 'assets/sky.png');
 		game.load.image('ground', 'assets/platform-pixel.png');
-
+		
 
 	},
 	
 	
 	create: function() { // add pepe as a sprite, with physics
 	
-	
-		
 		game.physics.startSystem(Phaser.Physics.ARCADE);
-	
+		
 		game.add.sprite(0, 0, 'sky');
-	
+		
 		platforms = game.add.group();
 		
 		platforms.enableBody = true;
@@ -116,10 +147,25 @@ mainState.prototype = {
 	}
 }
 
+
+
+
 // 500x500 screen, engine is Phaser.AUTO, id of the element to put this in
+
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', null);
-game.state.add('mainState', mainState, false);
+/*game.state.add('mainState', mainState, false);
 game.state.start('mainState');
 sounds.music.play();
 sounds.music.volume = .75;
-sounds.jumpsound.volume = 0.5;
+sounds.jumpsound.volume = 0.5;*/
+
+game.state.add('titleState', titleState, false);
+game.state.start('titleState');
+
+function startGame() {
+	game.state.add('mainState', mainState, false);
+	game.state.start('mainState');
+	sounds.music.play();
+	sounds.music.volume = .75;
+	sounds.jumpsound.volume = 0.5
+}
