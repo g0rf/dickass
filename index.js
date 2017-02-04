@@ -1,4 +1,4 @@
-var platforms;
+//var platforms;
 
 var sounds = {
 	music: new Audio("assets/sounds/soulbossanova.mp3"),
@@ -42,6 +42,9 @@ mainState.prototype = {
 	},
 
 	preload: function() { // load assets
+		game.load.tilemap('level1', 'assets/platform.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.image('gameTiles', 'assets/platform-pixel.png');
+		
 		game.load.image('pepe', 'assets/pepe.jpg');
 		game.load.image('john', 'assets/john.png');
 		game.load.spritesheet('dickass', 'assets/dickass-spritesheet.png', 100, 100);
@@ -50,34 +53,25 @@ mainState.prototype = {
 	},
 
 	create: function() {
-
 		game.physics.startSystem(Phaser.Physics.ARCADE);
+			
+		game.stage.backgroundColor = "#4488AA";
 
-		game.add.sprite(0, 0, 'sky');
+		this.map = this.game.add.tilemap('level1');
+		this.map.addTilesetImage('platform', 'gameTiles');
+		
+		this.backgroundlayer = this.map.createLayer('background');
+		this.collisionLayer = this.map.createLayer('collision');
+		this.map.setCollisionBetween(1, 100000, true, 'collision');
+		this.backgroundlayer.resizeWorld();
 
-		// Ground stuff
-		platforms = game.add.group();
-		platforms.enableBody = true;
-
-		var ground = platforms.create(0, game.world.height - 32, 'ground');
-		ground.body.immovable = true;
-
-		var ground2 = platforms.create(396, game.world.height - 32, 'ground');
-		ground2.body.immovable = true;
-		var ground3 = platforms.create(396*2, game.world.height - 32, 'ground');
-		ground3.body.immovable = true;
-
-		// Hovering platforms stuff
-		var ledge = platforms.create(450, 400, 'ground'); //right ledge
-		ledge.body.immovable = true;
-		var ledge2 = platforms.create(-100, 250, 'ground'); //left ledge
-		ledge2.body.immovable = true;
-
+		
 		this.pepe = this.game.add.sprite(game.world.centerX, game.world.centerY - 200, 'pepe');
 
 		this.john = this.game.add.sprite(game.world.centerX-150, game.world.centerY - 200, 'john');
 
 		this.dickass = this.game.add.sprite(game.world.centerX, game.world.centerY, 'dickass');
+		
 		this.dickass.faceLeft = function() {
 			this.anchor.setTo(.5,.5);
 			this.scale.x = -1;
@@ -87,21 +81,22 @@ mainState.prototype = {
 			this.scale.x = 1;
 		}
 
-		game.physics.enable(this.dickass, Phaser.Physics.ARCADE);
-
-		// this.dickass.scale.setTo(.8,.8);
-
+		//game.physics.enable(this.dickass, Phaser.Physics.ARCADE);
+		this.game.physics.arcade.enable(this.dickass);
+	
 		//mike doesn't like bounce that ass bounce bounce that ass
-		//this.dickass.body.bounce.y = 0.5;
+		this.dickass.body.bounce.y = 0.1;
 		this.dickass.body.gravity.y = 1000;
 		this.dickass.body.collideWorldBounds = true;
+		
+		this.game.camera.follow(this.dickass);
 
 		cursors = game.input.keyboard.createCursorKeys();
 	},
 
 	update: function() {
 		var v = 300; // movement speed
-		var hitPlatform = game.physics.arcade.collide(this.dickass, platforms);
+		var hitPlatform = game.physics.arcade.collide(this.dickass, this.collisionLayer);
 
 		//  Reset the players velocity (movement)
 		this.dickass.body.velocity.x = 0;
@@ -111,10 +106,10 @@ mainState.prototype = {
 			this.dickass.body.velocity.x = -150;
 			this.dickass.faceLeft();
 			this.dickass.frame = 1; // frame 1 is ROCKET SKATES LMFAO
+			
 		} else if (cursors.right.isDown) {
 			//  Move to the right
 			this.dickass.body.velocity.x = 150;
-			// this.dickass.animations.play('right');
 			this.dickass.frame = 1;
 			this.dickass.faceRight();
 		} else {
@@ -123,8 +118,9 @@ mainState.prototype = {
 			this.dickass.frame = 0;
 		}
 
+		
 		//  Allow the player to jump if they are touching the ground.
-		if (cursors.up.isDown && this.dickass.body.touching.down && hitPlatform) {
+		if (cursors.up.isDown && this.dickass.body.blocked.down && hitPlatform) {
 			this.dickass.body.velocity.y = -600;
 			sounds.jumpsound.play();
 		}
