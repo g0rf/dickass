@@ -71,7 +71,7 @@ mainState.prototype = {
 		var ledge = platforms.create(450, 400, 'ground'); //right ledge
 		ledge.body.immovable = true;
 		var ledge2 = platforms.create(-100, 250, 'ground'); //left ledge
-		ledge.body.immovable = true;
+		ledge2.body.immovable = true;
 
 		this.pepe = this.game.add.sprite(game.world.centerX, game.world.centerY - 200, 'pepe');
 
