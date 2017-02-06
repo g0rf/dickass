@@ -8,6 +8,7 @@ var sounds = {
 var mainState = function(game){};
 var titleState = function(game){};
 
+
 titleState.prototype = {
 	init: function() {
 		upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
@@ -33,12 +34,13 @@ titleState.prototype = {
 }
 
 mainState.prototype = {
+	
 	init: function() { // register keyboard inputs
 		this.upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
 		this.downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
 		this.leftKey = game.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 		this.rightKey = game.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-
+		this.spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 	},
 
 	preload: function() { // load assets
@@ -65,12 +67,23 @@ mainState.prototype = {
 		this.map.setCollisionBetween(1, 100000, true, 'collision');
 		this.backgroundlayer.resizeWorld();
 
+		this.weapon = this.add.weapon(3, 'john');
+		//this.bulletAngleVariance = 10;
+		this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+		this.weapon.bulletAngleOffset = 90;
+		this.weapon.fireRate = 500;
+		this.weapon.bulletSpeed = 600;
+		//this.weapon.trackSprite(this.dickass, 0, 0);
+
+		this.dickass = this.add.sprite(game.world.centerX - 700, 300, 'dickass');
+		fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 		
-		this.pepe = this.game.add.sprite(game.world.centerX, game.world.centerY - 200, 'pepe');
+		
+//		this.pepe = this.game.add.sprite(game.world.centerX, game.world.centerY - 200, 'pepe');
 
-		this.john = this.game.add.sprite(game.world.centerX-150, game.world.centerY - 200, 'john');
+//		this.john = this.game.add.sprite(game.world.centerX-150, game.world.centerY - 200, 'john');
 
-		this.dickass = this.game.add.sprite(game.world.centerX, game.world.centerY, 'dickass');
+		//this.dickass = this.game.add.sprite(game.world.centerX-200 , game.world.centerY, 'dickass');
 		
 		this.dickass.faceLeft = function() {
 			this.anchor.setTo(.5,.5);
@@ -82,7 +95,8 @@ mainState.prototype = {
 		}
 
 		//game.physics.enable(this.dickass, Phaser.Physics.ARCADE);
-		this.game.physics.arcade.enable(this.dickass);
+		this.physics.arcade.enable(this.dickass);
+
 	
 		//mike doesn't like bounce that ass bounce bounce that ass
 		this.dickass.body.bounce.y = 0.1;
@@ -90,8 +104,10 @@ mainState.prototype = {
 		this.dickass.body.collideWorldBounds = true;
 		
 		this.game.camera.follow(this.dickass);
-
-		cursors = game.input.keyboard.createCursorKeys();
+		
+		
+		//changed from game.input to this.input. not sure if that does anything
+		cursors = this.input.keyboard.createCursorKeys();
 	},
 
 	update: function() {
@@ -100,16 +116,19 @@ mainState.prototype = {
 
 		//  Reset the players velocity (movement)
 		this.dickass.body.velocity.x = 0;
-
+		
+		if (fireButton.isDown)	{
+			this.weapon.fire(this.dickass, 0, 0);
+		}
 		if (cursors.left.isDown) {
 			//  Move to the left
-			this.dickass.body.velocity.x = -150;
+			this.dickass.body.velocity.x = -250;
 			this.dickass.faceLeft();
 			this.dickass.frame = 1; // frame 1 is ROCKET SKATES LMFAO
 			
 		} else if (cursors.right.isDown) {
 			//  Move to the right
-			this.dickass.body.velocity.x = 150;
+			this.dickass.body.velocity.x = 250;
 			this.dickass.frame = 1;
 			this.dickass.faceRight();
 		} else {
@@ -122,10 +141,16 @@ mainState.prototype = {
 		//  Allow the player to jump if they are touching the ground.
 		if (cursors.up.isDown && this.dickass.body.blocked.down && hitPlatform) {
 			this.dickass.body.velocity.y = -600;
-			sounds.jumpsound.play();
+			//sounds.jumpsound.play();
 		}
+	},
+	
+	render: function() {
+		this.weapon.debug();
+		
 	}
 }
+
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', null);
 
@@ -135,7 +160,7 @@ game.state.start('titleState');
 function startGame() {
 	game.state.add('mainState', mainState, false);
 	game.state.start('mainState');
-	sounds.music.play();
+	//sounds.music.play();
 	sounds.music.volume = .75;
 	sounds.jumpsound.volume = 0.5
 }
