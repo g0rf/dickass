@@ -66,8 +66,11 @@ mainState.prototype = {
 		this.collisionLayer = this.map.createLayer('collision');
 		this.map.setCollisionBetween(1, 100000, true, 'collision');
 		this.backgroundlayer.resizeWorld();
-
-		this.weapon = this.add.weapon(3, 'john');
+        
+        this.dickass = this.add.sprite(game.world.centerX - 700, 300, 'dickass');
+        
+        
+		this.weapon = this.add.weapon(50, 'john');
 		//this.bulletAngleVariance = 10;
 		this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
 		this.weapon.bulletAngleOffset = 90;
@@ -75,7 +78,6 @@ mainState.prototype = {
 		this.weapon.bulletSpeed = 600;
 		//this.weapon.trackSprite(this.dickass, 0, 0);
 
-		this.dickass = this.add.sprite(game.world.centerX - 700, 300, 'dickass');
 		fireButton = this.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 		
 		
@@ -88,10 +90,12 @@ mainState.prototype = {
 		this.dickass.faceLeft = function() {
 			this.anchor.setTo(.5,.5);
 			this.scale.x = -1;
+            console.log('leftPressed');
 		}
 		this.dickass.faceRight = function() {
 			this.anchor.setTo(.5,.5);
 			this.scale.x = 1;
+            console.log('rightPressed');
 		}
 
 		//game.physics.enable(this.dickass, Phaser.Physics.ARCADE);
@@ -113,24 +117,26 @@ mainState.prototype = {
 	update: function() {
 		var v = 300; // movement speed
 		var hitPlatform = game.physics.arcade.collide(this.dickass, this.collisionLayer);
-
+        var facingRight = false;
+        var facingLeft = false;
 		//  Reset the players velocity (movement)
 		this.dickass.body.velocity.x = 0;
 		
-		if (fireButton.isDown)	{
-			this.weapon.fire(this.dickass, 0, 0);
-		}
 		if (cursors.left.isDown) {
 			//  Move to the left
 			this.dickass.body.velocity.x = -250;
 			this.dickass.faceLeft();
 			this.dickass.frame = 1; // frame 1 is ROCKET SKATES LMFAO
+            this.dickass.facingLeft = true;
+            this.dickass.facingRight = false;
 			
 		} else if (cursors.right.isDown) {
 			//  Move to the right
 			this.dickass.body.velocity.x = 250;
 			this.dickass.frame = 1;
 			this.dickass.faceRight();
+            this.dickass.facingRight = true;
+            this.dickass.facingLeft = false;
 		} else {
 			//  Stand still
 			this.dickass.animations.stop();
@@ -143,6 +149,27 @@ mainState.prototype = {
 			this.dickass.body.velocity.y = -600;
 			//sounds.jumpsound.play();
 		}
+        
+        /*if (fireButton.isDown && this.dickass.scale.x == 1)	{
+            console.log('shoot right');
+            this.weapon.fire(this.dickass, this.dickass.x, this.dickass.y);
+			
+        }*/
+        
+        if (fireButton.isDown)	{
+            console.log('shoost');
+            this.weapon.fire(this.dickass, this.dickass.x, this.dickass.y);
+			
+        }
+        
+        
+        if (this.dickass.scale.x == -1) {
+            this.weapon.bulletSpeed = -600;
+        } else (this.weapon.bulletSpeed = 600);
+       /* if (this.dickass.scale.x == 1) {
+            
+            console.log('dickass is facing right');
+        }*/
 	},
 	
 	render: function() {
