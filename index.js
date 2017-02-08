@@ -43,29 +43,33 @@ function Dickass(game) {
 
 	//mike doesn't like bounce that ass bounce bounce that ass
 	sprite.body.bounce.y = 0.1;
-	sprite.body.gravity.y = 1000;
+	//sprite.body.gravity.y = 1000;
 	sprite.body.collideWorldBounds = true;
 	game.camera.follow(sprite);
 
 	this.sprite = sprite; // make the sprite object public
 
 	// Create dickass' weapon and bullets
+	// Create dickass' weapon and bullets
 	this.bullets = game.add.group();
 	this.bullets.enableBody = true;
 	this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
-	this.bullets.createMultiple(30, 'john');
-	this.bullets.fireRate = 500;
-	this.bullets.bulletSpeed = 600;
-
-	this.weapon = game.add.weapon(50, 'john');
+	this.bullets.createMultiple(5, 'john');
+    this.bullets.setAll('outOfBoundsKill', true);
+    this.bullets.setAll('checkWorldBounds', true);
+    this.bulletTime = 0;
+    this.fireRate = 50;
+    
+	/*this.weapon = game.add.weapon(50, 'john');
 	this.weapon.enableBody = true;
 
 	this.bulletAngleVariance = 10;
 	this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
 	this.weapon.bulletAngleOffset = 90;
 	this.weapon.fireRate = 500;
-	this.weapon.bulletSpeed = 600;
-
+	this.weapon.bulletSpeed = 600;*/
+    
+    
 	var fireButton = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
 	// Add our overlay spritesheet as a child, so it always moves with dickass
@@ -87,19 +91,29 @@ function Dickass(game) {
 	}
 
 	this.fire = function() {
-		var multiplier = 1;
-		if (sprite.scale.x !== 1) { // if scale.x is not 1, then he's facing left
+		/*var multiplier = 1;
+        if (sprite.scale.x !== 1) { // if scale.x is not 1, then he's facing left
 				multiplier = -1;
-		}
-
-		//  Grab the first bullet we can from the pool
-		var bullet = this.bullets.getFirstExists(false);
-
-		if (bullet) {
-				bullet.reset(sprite.x, sprite.y);
-				bullet.body.velocity.x = 600 * multiplier;
-				// bulletTime = game.time.now + 200;
-		}
+		}*/
+        console.log('fu');
+        //  Grab the first bullet we can from the pool
+        
+        if (game.time.now > this.bulletTime && this.bullets.countDead() > 0) {
+            this.bulletTime = game.time.now + this.fireRate;
+            
+            var bullet = this.bullets.getFirstExists(false);
+        
+            bullet.reset(sprite.x, sprite.y);
+            bullet.body.velocity.y = -600;
+        }
+        
+        
+        /*if (bullet) {
+                bullet.reset(sprite.x, sprite.y);
+                bullet.body.velocity.y = -600;
+                
+               //this.bulletTime = game.time.now + 2000;
+        }*/
 	};
 
 	// Start off facing right. Call it here on creation, to avoid a weird jump thing that happens
@@ -107,9 +121,10 @@ function Dickass(game) {
 
 	// Main update function. Called in gameState update().
 	this.update = function() {
+        
 		//  Reset the players velocity (movement)
 		sprite.body.velocity.x = 0;
-
+        sprite.body.velocity.y = 0;
 		// Movement Stuff
 		if (cursors.left.isDown) {
 			//  Move to the left
@@ -126,12 +141,21 @@ function Dickass(game) {
 			//  Stand still
 			rocketOverlaySprite.frame = 0;
 		}
-
+        
+        if(cursors.up.isDown) {
+            // Move up
+            sprite.body.velocity.y = -150;
+        } else if (cursors.down.isDown) {
+            // Move down
+            sprite.body.velocity.y = 150;
+        } else {
+            sprite.body.velocity.y = 0;
+        }
 		//  Allow the player to jump if they are standing on top of anything
-		if (cursors.up.isDown && sprite.body.blocked.down) {
+		/*if (cursors.up.isDown && sprite.body.blocked.down) {
 			sprite.body.velocity.y = -600;
-			sounds.jumpsound.play();
-		}
+			sounds.jumpsound.play();*/
+		
 
 		// Weapon switch stuff
 		if (game.input.keyboard.isDown(Phaser.Keyboard.ONE)) {
@@ -147,11 +171,11 @@ function Dickass(game) {
 			sprite.frame = 1;
 			overlaySprite.frame = 2;
 		}
-
+        
 		if (fireButton.isDown)	{
-			this.fire();
-		}
-	}
+            this.fire();
+        }
+    }
 }
 
 mainState.prototype = {
@@ -195,8 +219,8 @@ mainState.prototype = {
 		this.pepes = game.add.group();
 		this.pepes.enableBody = true;
 		for (var i = 0; i < 5; i++)  {
-			this.pepe = this.pepes.create(game.world.centerX, i*150, 'pepe');
-			this.pepe.body.gravity.x = -6;
+			this.pepe = this.pepes.create(i*150, game.world.centerY - 300, 'pepe');
+			this.pepe.body.gravity.y = 6;
 		}
 
 		this.arnold = game.add.sprite(game.world.centerX - 200, 400, 'arnold');
@@ -214,11 +238,11 @@ mainState.prototype = {
 		var v = 300; // movement speed
 
 		// collision stuff
-		game.physics.arcade.collide(this.dickass.sprite, this.collisionLayer);
-    game.physics.arcade.collide(this.dickass.sprite, this.pepes);
-    game.physics.arcade.overlap(this.dickass.bullets, this.pepes, killPepe, null, this);
-		game.physics.arcade.collide(this.arnold, this.collisionLayer);
-    game.physics.arcade.collide(this.dickass.sprite, this.arnold);
+		//game.physics.arcade.collide(this.dickass.sprite, this.collisionLayer);
+        game.physics.arcade.collide(this.dickass.sprite, this.pepes);
+        game.physics.arcade.overlap(this.dickass.bullets, this.pepes, killPepe, null, this);
+		//game.physics.arcade.collide(this.arnold, this.collisionLayer);
+        game.physics.arcade.collide(this.dickass.sprite, this.arnold);
 
 		this.dickass.update();
 	},
@@ -233,7 +257,7 @@ function startGame() {
 	game.state.add('mainState', mainState, false);
 	game.state.start('mainState');
 	sounds.music.volume = .75;
-	sounds.music.play();
+	//sounds.music.play();
 	sounds.jumpsound.volume = 0.5
 }
 
