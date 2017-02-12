@@ -200,8 +200,9 @@ function Dickass(game) {
     },
         
     this.render = function() {
-        game.debug.spriteInfo(sprite, 32, 32);
-        game.debug.text(this.bullets, 32, 16);
+        //mike pls don't delete I just comment these out so they don't show up pls don't delete tho lol
+		//game.debug.spriteInfo(sprite, 32, 32);
+        //game.debug.text(this.bullets, 32, 16);
 
     }
 }
@@ -237,17 +238,21 @@ mainState.prototype = {
       
         if (sfw == true) {
             game.load.image('dickass', 'assets/piggy.png');
+			game.load.image('pepe', 'assets/mrchef.png');
             game.load.spritesheet('dickassRocketOverlay', 'assets/dickass-rocket-overlay.png', 100, 100);
+			
+			
         }   else {
             game.load.spritesheet('dickass', 'assets/dickass-spritesheet-dark-border.png', 100, 100);
 			game.load.spritesheet('dickassOverlay', 'assets/smaller-overlay.png', 50, 50);
             game.load.spritesheet('dickassOverlay', 'assets/smaller-overlay.png', 50, 50);
             game.load.spritesheet('dickassRocketOverlay', 'assets/dickass-rocket-overlay.png', 100, 100);
+			game.load.image('pepe', 'assets/pepe.jpg')
             game.load.image('arnold', 'assets/arnold.png');
         }
     
        
-		game.load.image('pepe', 'assets/pepe.jpg');
+		//game.load.image('pepe', 'assets/pepe.jpg');
 		game.load.image('john', 'assets/john.png');
         
         
