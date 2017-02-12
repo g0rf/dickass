@@ -59,30 +59,35 @@ function Dickass(game) {
 
 	//mike doesn't like bounce that ass bounce bounce that ass
 	sprite.body.bounce.y = 0.1;
-	sprite.body.gravity.y = 1000;
+	//sprite.body.gravity.y = 1000;
 	sprite.body.collideWorldBounds = true;
 	game.camera.follow(sprite);
 
 	this.sprite = sprite; // make the sprite object public
 
 	// Create dickass' weapon and bullets
+	// Create dickass' weapon and bullets
 	this.bullets = game.add.group();
 	this.bullets.enableBody = true;
 	this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
+
 	this.bullets.createMultiple(10, 'john');
+
     this.bullets.setAll('outOfBoundsKill', true);
     this.bullets.setAll('checkWorldBounds', true);
     this.bulletTime = 0;
     this.fireRate = 50;
-    
+
     
 	var fireButton = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
 
 	// Add our overlay spritesheet as a child, so it always moves with dickass
 	// Frame 0 is empty, so it shows nothing by default
-	var overlaySprite = game.make.sprite(25, -20, 'dickassOverlay');
-	sprite.addChild(overlaySprite);
-
+	if (sfw == false) {
+		var overlaySprite = game.make.sprite(25, -20, 'dickassOverlay');
+		sprite.addChild(overlaySprite);
+	}
+		
 	var rocketOverlaySprite = game.make.sprite(-50, -50, 'dickassRocketOverlay');
 	sprite.addChild(rocketOverlaySprite);
 
@@ -97,10 +102,12 @@ function Dickass(game) {
 	}
 
 	this.fire = function() {
+
 		var multiplier = 1;
         if (sprite.scale.x !== 1) { // if scale.x is not 1, then he's facing left
 				multiplier = -1;
 		}
+
         //  Grab the first bullet we can from the pool
         
         if (game.time.now > this.bulletTime && this.bullets.countDead() > 0) {
@@ -109,7 +116,9 @@ function Dickass(game) {
             var bullet = this.bullets.getFirstExists(false);
         
             bullet.reset(sprite.x, sprite.y);
+
             bullet.body.velocity.x = 600 * multiplier;
+
         }
         
         
@@ -150,42 +159,50 @@ function Dickass(game) {
         if(cursors.up.isDown) {
             // Move up
             sprite.body.velocity.y = -150;
+
             rocketOverlaySprite.frame = 1; // frame 1 is ROCKET SKATES LMFAO
+
         } else if (cursors.down.isDown) {
             // Move down
             sprite.body.velocity.y = 150;
         } else {
             sprite.body.velocity.y = 0;
+
             rocketOverlaySprite.frame = 0;
+
         }
 		//  Allow the player to jump if they are standing on top of anything
 		/*if (cursors.up.isDown && sprite.body.blocked.down) {
 			sprite.body.velocity.y = -600;
 			sounds.jumpsound.play();*/
 		
+
 		// Weapon switch stuff
-		if (game.input.keyboard.isDown(Phaser.Keyboard.ONE)) {
-			// unarmed overlay
-			sprite.frame = 0;
-			overlaySprite.frame = 0;
-		} else if (game.input.keyboard.isDown(Phaser.Keyboard.TWO)) {
-			// draw pistol overlay
-			sprite.frame = 1;
-			overlaySprite.frame = 1;
-		} else if (game.input.keyboard.isDown(Phaser.Keyboard.THREE)) {
-			// draw pistol overlay
-			sprite.frame = 1;
-			overlaySprite.frame = 2;
+		if (sfw == false) {
+			if (game.input.keyboard.isDown(Phaser.Keyboard.ONE)) {
+				// unarmed overlay
+				sprite.frame = 0;
+				overlaySprite.frame = 0;
+			} else if (game.input.keyboard.isDown(Phaser.Keyboard.TWO)) {
+				// draw pistol overlay
+				sprite.frame = 1;
+				overlaySprite.frame = 1;
+			} else if (game.input.keyboard.isDown(Phaser.Keyboard.THREE)) {
+				// draw pistol overlay
+				sprite.frame = 1;
+				overlaySprite.frame = 2;
+			}
 		}
-        
 		if (fireButton.isDown)	{
             this.fire();
         }
+
     },
         
     this.render = function() {
         game.debug.spriteInfo(sprite, 32, 32);
         game.debug.text(this.bullets, 32, 16);
+
     }
 }
 
@@ -220,10 +237,10 @@ mainState.prototype = {
       
         if (sfw == true) {
             game.load.image('dickass', 'assets/piggy.png');
-            game.load.spritesheet('dickassOverlay', 'assets/smaller-overlay.png', 50, 50);
             game.load.spritesheet('dickassRocketOverlay', 'assets/dickass-rocket-overlay.png', 100, 100);
         }   else {
             game.load.spritesheet('dickass', 'assets/dickass-spritesheet-dark-border.png', 100, 100);
+			game.load.spritesheet('dickassOverlay', 'assets/smaller-overlay.png', 50, 50);
             game.load.spritesheet('dickassOverlay', 'assets/smaller-overlay.png', 50, 50);
             game.load.spritesheet('dickassRocketOverlay', 'assets/dickass-rocket-overlay.png', 100, 100);
             game.load.image('arnold', 'assets/arnold.png');
@@ -256,10 +273,7 @@ mainState.prototype = {
 		this.map.setCollisionBetween(1, 100000, true, 'collision');
 		this.backgroundlayer.resizeWorld();
 
-		
-		
-        
-		
+
         if(sfw == false) {
             console.log('arnold added');
             this.arnold = game.add.sprite(game.world.centerX - 200, 400, 'arnold');
@@ -267,6 +281,8 @@ mainState.prototype = {
             this.arnold.body.gravity.y = 1000;
         }
       
+
+
 
 		// Create dickass
 		this.dickass = new Dickass(game);
@@ -279,11 +295,13 @@ mainState.prototype = {
 		var v = 300; // movement speed
 
 		// collision stuff
+
 		game.physics.arcade.collide(this.dickass.sprite, this.collisionLayer);
         game.physics.arcade.collide(this.dickass.sprite, this.pepes.pepes);
         game.physics.arcade.overlap(this.dickass.bullets, this.pepes.pepes, killPepe, null, this);
         game.physics.arcade.overlap(this.dickass.sprite, this.pepes.pepes, killDickass, null, this);
 		game.physics.arcade.collide(this.arnold, this.collisionLayer);
+
         game.physics.arcade.collide(this.dickass.sprite, this.arnold);
 
 		this.dickass.update();
@@ -304,7 +322,7 @@ function startGame() {
 	game.state.add('mainState', mainState, false);
 	game.state.start('mainState');
 	sounds.music.volume = .75;
-	//sounds.music.play();
+	sounds.music.play();
 	sounds.jumpsound.volume = 0.5
 }
 
