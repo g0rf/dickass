@@ -1,3 +1,4 @@
+//global variables
 var cursors;
 
 var sounds = {
@@ -9,9 +10,18 @@ var sounds = {
 var mainState = function(game){};
 var titleState = function(game){};
 var sfw = false;
-var totalEnemies = 0;
-var enemiesAlive = 0;
 
+var bulletTime = 0;
+var fireRate = 0;
+var enemyFireRate = 0;
+var enemyBulletTime = 0;
+
+var livingBaddies = [];
+//var baddieBullet;
+
+//idk if these are even being used lol
+var totalEnemies = 0; 
+var enemiesAlive = 0; 
 
 titleState.prototype = {
 	init: function() {
@@ -27,9 +37,9 @@ titleState.prototype = {
 		game.add.sprite(0, 0, 'sky');
 		var titleScreen = game.add.text(230, 80, 'The Adventures of Dickass', { font: '25px Arial', fill: '#ffffff'});
 
-		var howToStart = game.add.text(titleScreen.width, 120, 'Press up to start party', { font: '15px Arial', fill: '#ffffff'});
-        var howToStart = game.add.text(titleScreen.width, 150, 'Press down if u normal', { font: '15px Arial', fill: '#ffffff'});
-
+		var howToStart = game.add.text(titleScreen.width, 120, 'Press up to start party', { font: '15px Arial', fill: '#ffffff'}); 
+						 game.add.text(titleScreen.width, 150, 'Press down if u normal', { font: '15px Arial', fill: '#ffffff'});
+		
         
 		cursors = game.input.keyboard.createCursorKeys();
 	},
@@ -46,7 +56,7 @@ titleState.prototype = {
             
         }
 	}
-}
+};
 
 /**
  * Create a new Dickass
@@ -75,8 +85,10 @@ function Dickass(game) {
 
     this.bullets.setAll('outOfBoundsKill', true);
     this.bullets.setAll('checkWorldBounds', true);
-    this.bulletTime = 0;
-    this.fireRate = 50;
+    
+	//moving these to global variables so baddies can access them
+	/*this.bulletTime = 0;
+    this.fireRate = 50;*/
 
     
 	var fireButton = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
@@ -99,7 +111,7 @@ function Dickass(game) {
 	var faceRight = function() {
 		sprite.anchor.setTo(.5,.5);
 		sprite.scale.x = 1;
-	}
+	};
 
 	this.fire = function() {
 
@@ -110,32 +122,20 @@ function Dickass(game) {
 
         //  Grab the first bullet we can from the pool
         
-        if (game.time.now > this.bulletTime && this.bullets.countDead() > 0) {
-            this.bulletTime = game.time.now + this.fireRate;
-            
-            var bullet = this.bullets.getFirstExists(false);
-        
-            bullet.reset(sprite.x, sprite.y);
-
-            bullet.body.velocity.x = 600 * multiplier;
+        if (game.time.now > bulletTime && this.bullets.countDead() > 0) {
+            bulletTime = game.time.now + fireRate;
+      
 
         }
-        
-        
-        /*if (bullet) {
-                bullet.reset(sprite.x, sprite.y);
-                bullet.body.velocity.y = -600;
-                
-               //this.bulletTime = game.time.now + 2000;
-        }*/
 	};
 
 	// Start off facing right. Call it here on creation, to avoid a weird jump thing that happens
 	faceRight();
 
 	// Main update function. Called in gameState update().
+	// Update function for Dickass
 	this.update = function() {
-        
+    	    
 		//  Reset the players velocity (movement)
 		sprite.body.velocity.x = 0;
         sprite.body.velocity.y = 0;
@@ -193,6 +193,7 @@ function Dickass(game) {
 				overlaySprite.frame = 2;
 			}
 		}
+		
 		if (fireButton.isDown)	{
             this.fire();
         }
@@ -207,17 +208,78 @@ function Dickass(game) {
     }
 }
 
-function Pepe(game) {
-    
-    //game.physics.arcade.enable(group);
-
-    this.pepes = game.add.group();
-    this.pepes.enableBody = true;
+function Baddie(game) {
+	
+ 	//made a bad boy
+	this.baddies = game.add.group();
+    this.baddies.enableBody = true; 
 		for (var i = 0; i < 5; i++)  {
-			this.pepe = this.pepes.create(game.world.centerX, i * 150, 'pepe');
-			this.pepe.body.gravity.x = -150;    
+			this.baddie = this.baddies.create(game.world.centerX, i * 150, 'baddie');
+			this.baddie.body.gravity.x = -50;    
             }
+	this.physicsBodyType = Phaser.Physics.ARCADE; 
+	//make a bad boy bullets
+	this.baddieBullets = game.add.group();
+	this.baddieBullets.enableBody = true;
+	this.baddieBullets.physicsBodyType = Phaser.Physics.ARCADE;
+	this.baddieBullets.createMultiple (5, 'john');
+	this.baddieBullets.setAll('outOfBoundsKill', true);
+	this.baddieBullets.setAll('checkWorldBounds', true);
+	
+
+	
+	/*not sure thy this is written like:
+	>>  this.update = function() {...} <<  rather than >> this.update: function() {...} <<
+	possibly bc it isn't a state?*/
+		 
+		 
+	this.update = function () {
+		if (game.time.now > fireRate) {
+            
+			//bulletTime = game.time.now + fireRate;
+  
+			this.baddieFire();
+		}
+	};
+	
+		
+	this.baddieFire = function() {
+		
+		this.baddieBullet = this.baddieBullets.getFirstExists(false);
+		
+		livingBaddies.length=0;
+		
+		this.baddies.forEachAlive(function(baddies){
+			livingBaddies.push(baddies);
+		});
+			
+		
+	 if (game.time.now > enemyBulletTime) {
+            enemyBulletTime = game.time.now + enemyFireRate;
+            
+           
+        
+        
+		
+	 }
+	
+		if (this.baddieBullet && livingBaddies.length > 0) {
+			
+			var random = game.rnd.integerInRange(0, livingBaddies.length-1);
+			//randomly select a baddie
+			var shooter = livingBaddies[random];
+			//and fire a bullet from said baddie
+			this.baddieBullet.reset(shooter.body.x, shooter.body.y, -150);
+			//this.baddieBullet.velocity.x - 50;
+			game.physics.arcade.moveToXY(this.baddieBullet, 0, shooter.body.y, 250);
+			//game.physics.arcade.moveToObject(this.baddieBullet, 0, 120);
+			enemyFireRate = game.time.now + 2000;
+		}	
+	}; //end baddieFire function
+	
+	
 }
+	
 mainState.prototype = {
 
 	init: function() { // register keyboard inputs
@@ -238,7 +300,7 @@ mainState.prototype = {
       
         if (sfw == true) {
             game.load.image('dickass', 'assets/piggy.png');
-			game.load.image('pepe', 'assets/mrchef.png');
+			game.load.image('baddie', 'assets/mrchef.png');
             game.load.spritesheet('dickassRocketOverlay', 'assets/dickass-rocket-overlay.png', 100, 100);
 			
 			
@@ -247,12 +309,12 @@ mainState.prototype = {
 			game.load.spritesheet('dickassOverlay', 'assets/smaller-overlay.png', 50, 50);
             game.load.spritesheet('dickassOverlay', 'assets/smaller-overlay.png', 50, 50);
             game.load.spritesheet('dickassRocketOverlay', 'assets/dickass-rocket-overlay.png', 100, 100);
-			game.load.image('pepe', 'assets/pepe.jpg')
+			game.load.image('baddie', 'assets/pepe.jpg');
             game.load.image('arnold', 'assets/arnold.png');
         }
     
        
-		//game.load.image('pepe', 'assets/pepe.jpg');
+		//game.load.image('baddie', 'assets/pepe.jpg');
 		game.load.image('john', 'assets/john.png');
         
         
@@ -291,7 +353,7 @@ mainState.prototype = {
 
 		// Create dickass
 		this.dickass = new Dickass(game);
-        this.pepes = new Pepe(game);
+        this.baddies = new Baddie(game);
 		//changed from game.input to this.input. not sure if that does anything
 		cursors = this.input.keyboard.createCursorKeys();
 	},
@@ -302,15 +364,15 @@ mainState.prototype = {
 		// collision stuff
 
 		game.physics.arcade.collide(this.dickass.sprite, this.collisionLayer);
-        game.physics.arcade.collide(this.dickass.sprite, this.pepes.pepes);
-        game.physics.arcade.overlap(this.dickass.bullets, this.pepes.pepes, killPepe, null, this);
-        game.physics.arcade.overlap(this.dickass.sprite, this.pepes.pepes, killDickass, null, this);
+        game.physics.arcade.collide(this.dickass.sprite, this.baddies.baddies);
+        game.physics.arcade.overlap(this.dickass.bullets, this.baddies.baddies, killBaddie, null, this);
+        game.physics.arcade.overlap(this.dickass.sprite, this.baddies.baddies, killDickass, null, this);
 		game.physics.arcade.collide(this.arnold, this.collisionLayer);
 
         game.physics.arcade.collide(this.dickass.sprite, this.arnold);
 
 		this.dickass.update();
-        //this.pepe.update();
+        this.baddies.update();
 	},   
     
     render: function() {
@@ -331,13 +393,13 @@ function startGame() {
 	sounds.jumpsound.volume = 0.5
 }
 
-function killPepe(bullets, pepe) {
-    pepe.kill();
+function killBaddie(bullets, baddie) {
+    baddie.kill();
     bullets.kill();
 }
 
-function killDickass(dickass, pepe) {
+function killDickass(dickass, baddie) {
     dickass.kill();
-    pepe.kill();
+    baddie.kill();
 }
 
