@@ -35,7 +35,7 @@ titleState.prototype = {
 
 	create: function () {
 		game.add.sprite(0, 0, 'sky');
-		var titleScreen = game.add.text(230, 80, 'The Adventures of Dickass', { font: '25px Arial', fill: '#ffffff'});
+		var titleScreen = game.add.text(230, 80, 'The Adventures of Rat Bastard', { font: '25px Arial', fill: '#ffffff'});
 
 		var howToStart = game.add.text(titleScreen.width, 120, 'Press up to start party', { font: '15px Arial', fill: '#ffffff'}); 
 						 game.add.text(titleScreen.width, 150, 'Press down if u normal', { font: '15px Arial', fill: '#ffffff'});
@@ -81,7 +81,7 @@ function Dickass(game) {
 	this.bullets.enableBody = true;
 	this.bullets.physicsBodyType = Phaser.Physics.ARCADE;
 
-	this.bullets.createMultiple(10, 'john');
+	this.bullets.createMultiple(10, 'bullet');
 
     this.bullets.setAll('outOfBoundsKill', true);
     this.bullets.setAll('checkWorldBounds', true);
@@ -122,9 +122,15 @@ function Dickass(game) {
 
         //  Grab the first bullet we can from the pool
         
+        
         if (game.time.now > bulletTime && this.bullets.countDead() > 0) {
-            bulletTime = game.time.now + fireRate;
-      
+            bulletTime = game.time.now + 200;
+        
+            var bullet = this.bullets.getFirstExists(false);
+         
+            bullet.reset(sprite.x, sprite.y);
+
+            bullet.body.velocity.x = 600 * multiplier;
 
         }
 	};
@@ -215,7 +221,7 @@ function Baddie(game) {
     this.baddies.enableBody = true; 
 		for (var i = 0; i < 5; i++)  {
 			this.baddie = this.baddies.create(game.world.centerX, i * 150, 'baddie');
-			this.baddie.body.gravity.x = -50;    
+			this.baddie.body.velocity.x = -50;    
             }
 	this.physicsBodyType = Phaser.Physics.ARCADE; 
 	//make a bad boy bullets
@@ -254,14 +260,10 @@ function Baddie(game) {
 		});
 			
 		
-	 if (game.time.now > enemyBulletTime) {
-            enemyBulletTime = game.time.now + enemyFireRate;
-            
-           
-        
-        
+	    if (game.time.now > enemyBulletTime) {
+            enemyBulletTime = game.time.now + enemyFireRate;  
 		
-	 }
+        }
 	
 		if (this.baddieBullet && livingBaddies.length > 0) {
 			
@@ -302,7 +304,7 @@ mainState.prototype = {
             game.load.image('dickass', 'assets/piggy.png');
 			game.load.image('baddie', 'assets/mrchef.png');
             game.load.spritesheet('dickassRocketOverlay', 'assets/dickass-rocket-overlay.png', 100, 100);
-			
+			game.load.image('bullet', 'assets/egg.png');
 			
         }   else {
             game.load.spritesheet('dickass', 'assets/dickass-spritesheet-dark-border.png', 100, 100);
@@ -316,7 +318,7 @@ mainState.prototype = {
        
 		//game.load.image('baddie', 'assets/pepe.jpg');
 		game.load.image('john', 'assets/john.png');
-        
+      
         
         // game.load.spritesheet('dickass', 'assets/dickass-spritesheet-dark-border.png', 100, 100);
 		// game.load.spritesheet('dickassOverlay', 'assets/dickass-overlay.png', 100, 100);
@@ -367,6 +369,7 @@ mainState.prototype = {
         game.physics.arcade.collide(this.dickass.sprite, this.baddies.baddies);
         game.physics.arcade.overlap(this.dickass.bullets, this.baddies.baddies, killBaddie, null, this);
         game.physics.arcade.overlap(this.dickass.sprite, this.baddies.baddies, killDickass, null, this);
+        game.physics.arcade.overlap(this.dickass.sprite, this.baddies.baddieBullets, dickassShot, null, this);
 		game.physics.arcade.collide(this.arnold, this.collisionLayer);
 
         game.physics.arcade.collide(this.dickass.sprite, this.arnold);
@@ -401,5 +404,11 @@ function killBaddie(bullets, baddie) {
 function killDickass(dickass, baddie) {
     dickass.kill();
     baddie.kill();
+}
+
+function dickassShot(dickass, baddieBullets) {
+    console.log('shot');
+    dickass.kill();
+    baddieBullets.kill();
 }
 
