@@ -1,4 +1,26 @@
+/*to do
+
+-get mike to make some friggin assets (rat, levels, enemies, jetpack)
+
+-game over screen
+-enemy reload timers
+-pause button
+-level 1 design
+
+-new music
+-boss 1
+-second enemies
+-different bullets
+-score system
+-item drops (coins, ammo, different guns, etc.)
+-enemy health/bullet damage (can work on this with boss)
+-mute button
+-mouse select sfw/nsfw
+*/
+
+
 //global variables
+
 var cursors;
 
 var sounds = {
@@ -9,6 +31,7 @@ var sounds = {
 
 var mainState = function(game){};
 var titleState = function(game){};
+var gameOverState = function(game){};
 var sfw = false;
 
 var bulletTime = 0;
@@ -17,44 +40,86 @@ var enemyFireRate = 0;
 var enemyBulletTime = 0;
 
 var livingBaddies = [];
-//var baddieBullet;
+
+var playerLives = 3;
 
 //idk if these are even being used lol
 var totalEnemies = 0; 
 var enemiesAlive = 0; 
 
+
 titleState.prototype = {
 	init: function() {
 		upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
         downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+		game.input.mouse.capture = true;
 	},
 
 	preload: function () {
 		game.load.image('sky', 'assets/sky.png');
+		game.load.image('pepe', 'assets/pepe.jpg');
+		game.load.image('piggy', 'assets/piggy.png')
 	},
 
 	create: function () {
 		game.add.sprite(0, 0, 'sky');
+		
+		var nsfwButton = game.add.sprite(game.world.centerX - 150, game.world.centerY, 'pepe');
+		var sfwButton = game.add.sprite(game.world.centerX + 50, game.world.centerY + 25, 'piggy');
+		
 		var titleScreen = game.add.text(230, 80, 'The Adventures of Rat Bastard', { font: '25px Arial', fill: '#ffffff'});
 
 		var howToStart = game.add.text(titleScreen.width, 120, 'Press up to start party', { font: '15px Arial', fill: '#ffffff'}); 
 						 game.add.text(titleScreen.width, 150, 'Press down if u normal', { font: '15px Arial', fill: '#ffffff'});
 		
-        
+        nsfwButton.inputEnabled = true;
+		sfwButton.inputEnabled = true;
+		
+		var pepeTouched = false;
+		
+		//pepe button
+		nsfwButton.events.onInputUp.add(function () 
+		{
+			console.log('pepe touched');
+			startGame();
+			
+			
+		});
+		
+		
+		//piggy button
+		sfwButton.events.onInputUp.add(function () {
+			console.log('piggy touched');
+			sfw = true;
+			startGame();
+	
+		});
+		
 		cursors = game.input.keyboard.createCursorKeys();
 	},
 
 	update: function () {
+		console.log(sfw);
+		
 		if (cursors.up.isDown) {
             startGame();
 		}
         
         if (cursors.down.isDown) {
-            console.log(true);
+            console.log('true');
             sfw = true;
             startGame();
-            
         }
+
+		
+	},
+	
+	render: function () {
+		game.debug.text('piss' + game.input.activePointer.leftButton.isDown, 25, 25);
+		game.debug.text('shit' + game.input.activePointer.rightButton.isDown, 25, 45);
+		//game.debug.pointer(game.input.activePointer);
+		
+//		  cu*rentTilePosition = ((layer.getTileY(game.input.activePointer.worldY)+1)*6)-(6-(layer.getTileX(game.input.activePointer.worldX)+1));
 	}
 };
 
@@ -215,16 +280,37 @@ function Dickass(game) {
 }
 
 function Baddie(game) {
-	
  	//made a bad boy
+	var respawnReady = true;
+//	this.spawnCounter = 0;
+//	this.maxBaddies = 20;
 	this.baddies = game.add.group();
     this.baddies.enableBody = true; 
-		for (var i = 0; i < 5; i++)  {
-			this.baddie = this.baddies.create(game.world.centerX, i * 150, 'baddie');
-			this.baddie.body.velocity.x = -50;    
-            }
+		
+	
+	
+	for (var i = 0; i < 5; i++)  {		
+			this.baddie = this.baddies.create(game.world.centerX, i * Math.floor((Math.random() * 150) + 1), 'baddie');
+			this.baddie.body.velocity.x = -50; 
+			this.spawnCounter++;
+			console.log(this.spawnCounter);
+		}
+	
+	function spawnEnemies() {
+		this.baddies = game.add.group();
+		this.baddies.enableBody = true; 
+		this.baddie = this.baddies.create(game.world.centerX, Math.floor((Math.random() * 150) + 1), 'baddie');
+		this.baddie.body.velocity.x = -50;
+//		this.baddie = this.baddies.getFirstExists(false);
+//		if(respawnReady = true) {
+//			baddie.reset(game.world.centerX, 100);
+//			baddie.body.velocity.x = -50;
+//		}
+	}
+	
 	this.physicsBodyType = Phaser.Physics.ARCADE; 
-	//make a bad boy bullets
+	
+	//bad boy bullets
 	this.baddieBullets = game.add.group();
 	this.baddieBullets.enableBody = true;
 	this.baddieBullets.physicsBodyType = Phaser.Physics.ARCADE;
@@ -232,23 +318,25 @@ function Baddie(game) {
 	this.baddieBullets.setAll('outOfBoundsKill', true);
 	this.baddieBullets.setAll('checkWorldBounds', true);
 	
-
-	
 	/*not sure thy this is written like:
 	>>  this.update = function() {...} <<  rather than >> this.update: function() {...} <<
 	possibly bc it isn't a state?*/
 		 
-		 
 	this.update = function () {
 		if (game.time.now > fireRate) {
-            
 			//bulletTime = game.time.now + fireRate;
-  
-			this.baddieFire();
+			this.baddieFire();	
+			
 		}
+	if(livingBaddies < 5) {
+		spawnEnemies();
+	}
+		
+//		if(this.spawnCounter < this.maxBaddies) {
+//			baddies.create();
+//		}
 	};
 	
-		
 	this.baddieFire = function() {
 		
 		this.baddieBullet = this.baddieBullets.getFirstExists(false);
@@ -314,17 +402,10 @@ mainState.prototype = {
 			game.load.image('baddie', 'assets/pepe.jpg');
             game.load.image('arnold', 'assets/arnold.png');
         }
-    
-       
+
 		//game.load.image('baddie', 'assets/pepe.jpg');
 		game.load.image('john', 'assets/john.png');
       
-        
-        // game.load.spritesheet('dickass', 'assets/dickass-spritesheet-dark-border.png', 100, 100);
-		// game.load.spritesheet('dickassOverlay', 'assets/dickass-overlay.png', 100, 100);
-		//game.load.spritesheet('dickassOverlay', 'assets/smaller-overlay.png', 50, 50);
-		//game.load.spritesheet('dickassRocketOverlay', 'assets/dickass-rocket-overlay.png', 100, 100);
-		//game.load.image('arnold', 'assets/arnold.png');
 		game.load.image('sky', 'assets/sky.png');
 		game.load.image('ground', 'assets/platform-pixel.png');
 	},
@@ -333,6 +414,7 @@ mainState.prototype = {
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 
 		game.stage.backgroundColor = "#4488AA";
+		//livesText = game.add.text(game.world.center-250, game.world.centerY-250, 'Lives = ' + playerLives, { font: '25px Arial', fill: '#ffffff'});
 
 		this.map = this.game.add.tilemap('level1');
 		this.map.addTilesetImage('platform', 'gameTiles');
@@ -379,9 +461,45 @@ mainState.prototype = {
 	},   
     
     render: function() {
-        this.dickass.render();
+        //this.dickass.render();
+		game.debug.text('Lives:' + playerLives, 32, 32);
     }
-}
+};
+
+
+gameOverState.prototype = {
+	init: function() {
+		upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
+        downKey = game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+		spaceKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	},
+
+	preload: function () {
+		game.load.image('sky', 'assets/sky.png');
+	},
+
+	create: function () {
+		game.add.sprite(0, 0, 'sky');
+		var shitScreen = game.add.text(100, 80, 'That ball didnt have a chance comin off yo hands playa', { font: '25px Arial', fill: '#ffffff'});
+		var playAgain = game.add.text(shitScreen.x, 100, 'press space to play again', { font: '25px Arial', fill: '#ffffff'});
+		playerLives = 3;
+
+		cursors = game.input.keyboard.createCursorKeys();
+		
+	},
+
+	update: function () {
+	  
+        if (spaceKey.isDown) {
+            console.log(true);
+            sfw = true;
+            startGame();
+			
+            
+        }
+	}
+};
+
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', null);
 
@@ -392,7 +510,7 @@ function startGame() {
 	game.state.add('mainState', mainState, false);
 	game.state.start('mainState');
 	sounds.music.volume = .75;
-	sounds.music.play();
+	//sounds.music.play();
 	sounds.jumpsound.volume = 0.5
 }
 
@@ -408,7 +526,27 @@ function killDickass(dickass, baddie) {
 
 function dickassShot(dickass, baddieBullets) {
     console.log('shot');
-    dickass.kill();
+
     baddieBullets.kill();
+	console.log(playerLives);
+	playerLives -= 1;
+	//livesText.text = 'Lives =' + playerLives;
+	
+	//change the input key for start stop so shit doesn't auto restart if you're holding down 
+	//the down or up key
+	//y spacebar no friggin work huh??
+	if (playerLives <= 0) {
+		console.log('dead');
+		dickass.kill();
+	 	gameOverScreen();
+	}
 }
 
+function gameOverScreen() {
+	//sounds.music.pause();
+	game.state.add('gameOverState', gameOverState, false);
+	game.state.start('gameOverState');
+	
+	
+
+}
