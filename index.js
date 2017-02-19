@@ -301,7 +301,7 @@ function Baddie(game) {
 	var respawnReady = true;
 	var spawnTimer = 0;
 //	this.maxBaddies = 20;
-	var spawnCounter = 0;
+	//var spawnCounter = 0;
 	
 	var self=this;
 	this.baddies = game.add.group();
@@ -310,10 +310,10 @@ function Baddie(game) {
 	
 	
 	for (var i = 0; i < 5; i++)  {		
-			self.baddie = self.baddies.create(game.world.centerX, i * Math.floor((Math.random() * 150) + 1), 'baddie');
-			self.baddie.body.velocity.x = -50; 
-			self.spawnCounter++;
-			console.log(this.spawnCounter);
+			this.baddie = this.baddies.create(game.world.centerX, i * Math.floor((Math.random() * 150) + 1), 'baddie');
+			this.baddie.body.velocity.x = -50; 
+			//self.spawnCounter++;
+			//console.log(this.spawnCounter);
 		}
 	
 	function spawnEnemies() {
@@ -321,6 +321,7 @@ function Baddie(game) {
 		self.baddies.enableBody = true; 
 		self.baddie = self.baddies.create(game.world.centerX, Math.floor((Math.random() * 150) + 1), 'baddie');
 		self.baddie.body.velocity.x = -50;
+		
 	}
 	
 	this.physicsBodyType = Phaser.Physics.ARCADE; 
@@ -463,6 +464,7 @@ mainState.prototype = {
 
 		game.physics.arcade.collide(this.dickass.sprite, this.collisionLayer);
         game.physics.arcade.overlap(this.dickass.bullets, this.baddies.baddies, killBaddie, null, this);
+		game.physics.arcade.overlap(this.dickass.bullets, baddies.baddies, killBaddie, null, this);
         game.physics.arcade.overlap(this.dickass.sprite, this.baddies.baddies, killDickass, null, this);
         game.physics.arcade.overlap(this.dickass.sprite, this.baddies.baddieBullets, dickassShot, null, this);
 		game.physics.arcade.collide(this.arnold, this.collisionLayer);
