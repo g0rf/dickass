@@ -2,10 +2,11 @@
 
 -get mike to make some friggin assets (rat, levels, enemies, jetpack)
 
--game over screen
--enemy reload timers
+/// ==-game over screen ----////
+////=====-enemy reload timers-=====////
 -pause button
 -level 1 design
+-p2 physics for better collisions and gravity
 
 -new music
 -boss 1
@@ -15,7 +16,8 @@
 -item drops (coins, ammo, different guns, etc.)
 -enemy health/bullet damage (can work on this with boss)
 -mute button
--mouse select sfw/nsfw
+======/////=-mouse select sfw/nsfw===/////
+
 */
 
 
@@ -129,7 +131,7 @@ titleState.prototype = {
  */
 function Dickass(game) {
 	// create a new sprite at center
-	var sprite = game.add.sprite(game.world.centerX - 700, 300, 'dickass');
+	var sprite = game.add.sprite(game.world.centerX - 700, 450, 'dickass');
 	game.physics.arcade.enable(sprite);
 
 	//mike doesn't like bounce that ass bounce bounce that ass
@@ -206,7 +208,8 @@ function Dickass(game) {
 	// Main update function. Called in gameState update().
 	// Update function for Dickass
 	this.update = function() {
-    	    
+		console.log(sprite.body.acceleration.y);
+    	sprite.body.gravity.y = 10000;    
 		//  Reset the players velocity (movement)
 		sprite.body.velocity.x = 0;
         sprite.body.velocity.y = 0;
@@ -227,10 +230,22 @@ function Dickass(game) {
 			//rocketOverlaySprite.frame = 0;
 		}
         
-        if(cursors.up.isDown) {
+		if (cursors.up.isDown && sprite.body.blocked.down) {
+			sprite.body.velocity.y = -4000;
+			sprite.body.acceleration.y += -3000;
+		
+		
+		}   else if(cursors.up.isDown) {
             // Move up
-            sprite.body.velocity.y = -150;
-
+			//jump!
+//			if(sprite.body.blocked.down) {
+//            	sprite.body.velocity.y = -4000;
+//				sprite.body.acceleration.y += 10;
+//			}
+			
+			sprite.body.acceleration.y += -250;
+			sprite.body.velocity.y = -50;
+			
             rocketOverlaySprite.frame = 1; // frame 1 is ROCKET SKATES LMFAO
 
         } else if (cursors.down.isDown) {
@@ -238,8 +253,10 @@ function Dickass(game) {
             sprite.body.velocity.y = 150;
         } else {
             sprite.body.velocity.y = 0;
-
             rocketOverlaySprite.frame = 0;
+			if (sprite.body.acceleration.y < 0) {
+				sprite.body.acceleration.y += 250;
+			}
 
         }
 		//  Allow the player to jump if they are standing on top of anything
@@ -431,9 +448,6 @@ mainState.prototype = {
             game.physics.arcade.enable(this.arnold);
             this.arnold.body.gravity.y = 1000;
         }
-      
-
-
 
 		// Create dickass
 		this.dickass = new Dickass(game);
