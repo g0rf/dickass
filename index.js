@@ -298,16 +298,17 @@ function Dickass(game) {
 
 function Baddie(game) {
  	//made a bad boy
-	var respawnReady = true;
+	//var respawnReady = true;
 	var spawnTimer = 0;
 //	this.maxBaddies = 20;
 	//var spawnCounter = 0;
 	
-	var self=this;
-	this.baddies = game.add.group();
-    this.baddies.enableBody = true; 
-		
+
 	
+	var self=this;
+	this.baddies = game.add.group(); 
+	self.baddies.enableBody = true; 
+
 	
 	for (var i = 0; i < 5; i++)  {		
 			this.baddie = this.baddies.create(game.world.centerX, i * Math.floor((Math.random() * 150) + 1), 'baddie');
@@ -317,8 +318,6 @@ function Baddie(game) {
 		}
 	
 	function spawnEnemies() {
-		self.baddies = game.add.group();
-		self.baddies.enableBody = true; 
 		self.baddie = self.baddies.create(game.world.centerX, Math.floor((Math.random() * 150) + 1), 'baddie');
 		self.baddie.body.velocity.x = -50;
 		
@@ -464,7 +463,6 @@ mainState.prototype = {
 
 		game.physics.arcade.collide(this.dickass.sprite, this.collisionLayer);
         game.physics.arcade.overlap(this.dickass.bullets, this.baddies.baddies, killBaddie, null, this);
-		game.physics.arcade.overlap(this.dickass.bullets, baddies.baddies, killBaddie, null, this);
         game.physics.arcade.overlap(this.dickass.sprite, this.baddies.baddies, killDickass, null, this);
         game.physics.arcade.overlap(this.dickass.sprite, this.baddies.baddieBullets, dickassShot, null, this);
 		game.physics.arcade.collide(this.arnold, this.collisionLayer);
