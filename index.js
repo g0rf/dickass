@@ -301,6 +301,8 @@ function Baddie(game) {
 	var respawnReady = true;
 //	this.spawnCounter = 0;
 //	this.maxBaddies = 20;
+	
+	var self=this;
 	this.baddies = game.add.group();
     this.baddies.enableBody = true; 
 		
@@ -314,10 +316,10 @@ function Baddie(game) {
 		}
 	
 	function spawnEnemies() {
-		this.baddies = game.add.group();
-		this.baddies.enableBody = true; 
-		this.baddie = this.baddies.create(game.world.centerX, Math.floor((Math.random() * 150) + 1), 'baddie');
-		this.baddie.body.velocity.x = -50;
+		self.baddies = game.add.group();
+		self.baddies.enableBody = true; 
+		self.baddie = this.baddies.create(game.world.centerX, Math.floor((Math.random() * 150) + 1), 'baddie');
+		self.baddie.body.velocity.x = -50;
 //		this.baddie = this.baddies.getFirstExists(false);
 //		if(respawnReady = true) {
 //			baddie.reset(game.world.centerX, 100);
