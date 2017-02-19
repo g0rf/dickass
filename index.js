@@ -299,8 +299,9 @@ function Dickass(game) {
 function Baddie(game) {
  	//made a bad boy
 	var respawnReady = true;
-//	this.spawnCounter = 0;
+	var spawnTimer = 0;
 //	this.maxBaddies = 20;
+	var spawnCounter = 0;
 	
 	var self=this;
 	this.baddies = game.add.group();
@@ -309,22 +310,17 @@ function Baddie(game) {
 	
 	
 	for (var i = 0; i < 5; i++)  {		
-			this.baddie = this.baddies.create(game.world.centerX, i * Math.floor((Math.random() * 150) + 1), 'baddie');
-			this.baddie.body.velocity.x = -50; 
-			this.spawnCounter++;
+			self.baddie = self.baddies.create(game.world.centerX, i * Math.floor((Math.random() * 150) + 1), 'baddie');
+			self.baddie.body.velocity.x = -50; 
+			self.spawnCounter++;
 			console.log(this.spawnCounter);
 		}
 	
 	function spawnEnemies() {
 		self.baddies = game.add.group();
 		self.baddies.enableBody = true; 
-		self.baddie = this.baddies.create(game.world.centerX, Math.floor((Math.random() * 150) + 1), 'baddie');
+		self.baddie = self.baddies.create(game.world.centerX, Math.floor((Math.random() * 150) + 1), 'baddie');
 		self.baddie.body.velocity.x = -50;
-//		this.baddie = this.baddies.getFirstExists(false);
-//		if(respawnReady = true) {
-//			baddie.reset(game.world.centerX, 100);
-//			baddie.body.velocity.x = -50;
-//		}
 	}
 	
 	this.physicsBodyType = Phaser.Physics.ARCADE; 
@@ -347,9 +343,11 @@ function Baddie(game) {
 			this.baddieFire();	
 			
 		}
-	if(livingBaddies < 5) {
-		spawnEnemies();
-	}
+
+		if (game.time.now > spawnTimer) {
+			spawnEnemies();
+			spawnTimer = game.time.now + 5000;
+		}
 		
 //		if(this.spawnCounter < this.maxBaddies) {
 //			baddies.create();
@@ -464,7 +462,6 @@ mainState.prototype = {
 		// collision stuff
 
 		game.physics.arcade.collide(this.dickass.sprite, this.collisionLayer);
-        game.physics.arcade.collide(this.dickass.sprite, this.baddies.baddies);
         game.physics.arcade.overlap(this.dickass.bullets, this.baddies.baddies, killBaddie, null, this);
         game.physics.arcade.overlap(this.dickass.sprite, this.baddies.baddies, killDickass, null, this);
         game.physics.arcade.overlap(this.dickass.sprite, this.baddies.baddieBullets, dickassShot, null, this);
@@ -517,7 +514,7 @@ gameOverState.prototype = {
 };
 
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'content', null);
+var game = new Phaser.Game(800, 640, Phaser.AUTO, 'content', null);
 
 game.state.add('titleState', titleState, false);
 game.state.start('titleState');
