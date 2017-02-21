@@ -518,8 +518,6 @@ var game = new Phaser.Game(800, 640, Phaser.AUTO, 'content', null);
 
 game.state.add('titleState', titleState, false);
 game.state.start('titleState');
-game.scale.scaleMode = Phaser.ScaleManager.USER_SCALE;
-game.scale.setUserScale(2, 2);
 
 function startGame() {
 	game.state.add('mainState', mainState, false);
