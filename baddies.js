@@ -15,7 +15,7 @@ function Baddie(game) {
     
     
 	for (var i = 0; i < 5; i++)  {		
-			this.baddie = this.baddies.create(game.world.centerX, i * Math.floor((Math.random() * 150) + 1), 'baddie');
+			this.baddie = this.baddies.create(game.world.centerX + 500, i * Math.floor((Math.random() * 850) + 1), 'baddie');
 			this.baddie.body.velocity.x = -50; 
 			//self.spawnCounter++;
 			//console.log(this.spawnCounter);
@@ -23,7 +23,7 @@ function Baddie(game) {
 		}
 	
 	function spawnEnemies() {
-		self.baddie = self.baddies.create(game.world.centerX, Math.floor((Math.random() * 150) + 1), 'baddie');
+		self.baddie = self.baddies.create(game.world.centerX + 500, Math.floor((Math.random() * 850) + 1), 'baddie');
 		self.baddie.body.velocity.x = -50;
         self.baddie.scale.x = -1;
 		
@@ -52,7 +52,7 @@ function Baddie(game) {
 
 		if (game.time.now > spawnTimer) {
 			spawnEnemies();
-			spawnTimer = game.time.now + 5000;
+			spawnTimer = game.time.now + 3000;
 		}
 		
 //		if(this.spawnCounter < this.maxBaddies) {

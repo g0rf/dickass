@@ -20,7 +20,7 @@ mainState.prototype = {
 //        game.load.image('dickass', 'assets/dickass/dickass-spritesheet-dark-border.png', 100, 100);
       
         if (sfw == true) {
-            game.load.image('dickass', 'assets/rat.png', 50, 50);
+            game.load.image('dickass', 'assets/rat100.png');
 			game.load.image('baddie', 'assets/piggy.png');
             game.load.spritesheet('dickassRocketOverlay', 'assets/dickass-rocket-overlay.png', 100, 100);
 			game.load.image('bullet', 'assets/egg.png');
@@ -55,8 +55,8 @@ mainState.prototype = {
 		this.map.setCollisionBetween(1, 100000, true, 'collision');
 		this.backgroundlayer.resizeWorld();
         
-        game.world.width = (this.game.width * 2);
-        game.world.height = (this.game.height * 2);
+        //game.world.width = (this.game.width * 2);
+        //game.world.height = (this.game.height * 2);
 
         if(sfw == false) {
             console.log('arnold added');

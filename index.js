@@ -44,7 +44,7 @@ var playerLives = 3;
 var totalEnemies = 0; 
 var enemiesAlive = 0; 
 
-var game = new Phaser.Game(800, 640, Phaser.AUTO, 'content', null);
+var game = new Phaser.Game(1000, 800, Phaser.AUTO, 'content', null);
 
 game.state.add('titleState', titleState, false);
 game.state.start('titleState');
@@ -65,6 +65,7 @@ function killBaddie(bullets, baddie) {
 function killDickass(dickass, baddie) {
     dickass.kill();
     baddie.kill();
+    gameOverScreen();
 }
 
 function dickassShot(dickass, baddieBullets) {

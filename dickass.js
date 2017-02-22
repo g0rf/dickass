@@ -47,6 +47,9 @@ function Dickass(game) {
 		sprite.anchor.setTo(.5,.5);
 		sprite.scale.x = 1;
 	};
+    
+    var inAir = true;
+
 
 	this.fire = function() {
 
@@ -76,7 +79,10 @@ function Dickass(game) {
 	// Main update function. Called in gameState update().
 	// Update function for Dickass
 	this.update = function() {
-		console.log(sprite.body.acceleration.y);
+		console.log('acceleration' + sprite.body.acceleration.y);
+        //console.log('velocity' + sprite.body.velocity.y)
+        console.log(inAir);
+        
     	sprite.body.gravity.y = 10000;    
 		//  Reset the players velocity (movement)
 		sprite.body.velocity.x = 0;
@@ -93,32 +99,30 @@ function Dickass(game) {
 			sprite.body.velocity.x = 150;
 			//rocketOverlaySprite.frame = 1;
 			faceRight();
-		} else {
-			//  Stand still
-			//rocketOverlaySprite.frame = 0;
-		}
+		} 
         
-		if (cursors.up.isDown && sprite.body.blocked.down) {
+        //check to see if rat man is in the air
+        if(sprite.body.blocked.down) {
+            inAir = false;
+        } else {
+            inAir = true;
+        }
+        
+        
+        //if up is pressed and rat is on the ground, jump and give a boost in acceleration
+        if (cursors.up.isDown && inAir == false) {
+            console.log('ayy');
 			sprite.body.velocity.y = -4000;
 			sprite.body.acceleration.y += -3000;
-		
-		
-		}   else if(cursors.up.isDown) {
-            // Move up
-			//jump!
-//			if(sprite.body.blocked.down) {
-//            	sprite.body.velocity.y = -4000;
-//				sprite.body.acceleration.y += 10;
-//			}
-			
-			sprite.body.acceleration.y += -250;
-			sprite.body.velocity.y = -50;
-			
-            rocketOverlaySprite.frame = 1; // frame 1 is ROCKET SKATES LMFAO
-
+        } 
+        //otherwise it just uses the jetpack		
+        else if(cursors.up.isDown && inAir == true) {
+            sprite.body.acceleration.y += -250;
+            sprite.body.velocity.y = -200;
+            rocketOverlaySprite.frame = 1;
         } else if (cursors.down.isDown) {
             // Move down
-            sprite.body.velocity.y = 150;
+            sprite.body.acceleration.y +=300;
         } else {
             sprite.body.velocity.y = 0;
             rocketOverlaySprite.frame = 0;
@@ -126,6 +130,12 @@ function Dickass(game) {
 				sprite.body.acceleration.y += 250;
 			}
 
+        }
+        
+        
+        
+        if(sprite.body.blocked.up) {
+            sprite.body.acceleration.y = 0;
         }
 		//  Allow the player to jump if they are standing on top of anything
 		/*if (cursors.up.isDown && sprite.body.blocked.down) {
