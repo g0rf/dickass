@@ -12,19 +12,15 @@ mainState.prototype = {
 	},
 
 	preload: function() { // load assets
-		game.load.tilemap('level1', 'assets/platform.json', null, Phaser.Tilemap.TILED_JSON);
-		game.load.image('gameTiles', 'assets/platform-pixel.png');
+		game.load.tilemap('level1', 'assets/beach.json', null, Phaser.Tilemap.TILED_JSON);
+		game.load.image('gameTiles', 'assets/platform2.png');
+    game.load.image('background', 'assets/bg1.png');
 
-        
-//        game.load.image('dickass', 'assets/john.png');
-//        game.load.image('dickass', 'assets/dickass/dickass-spritesheet-dark-border.png', 100, 100);
-      
         if (sfw == true) {
             game.load.image('dickass', 'assets/rat100.png');
 			game.load.image('baddie', 'assets/piggy.png');
             game.load.spritesheet('dickassRocketOverlay', 'assets/dickass-rocket-overlay.png', 100, 100);
-			game.load.image('bullet', 'assets/egg.png');
-			
+
         }   else {
             game.load.spritesheet('dickass', 'assets/dickass-spritesheet-dark-border.png', 100, 100);
 			game.load.spritesheet('dickassOverlay', 'assets/smaller-overlay.png', 50, 50);
@@ -35,8 +31,8 @@ mainState.prototype = {
         }
 
 		//game.load.image('baddie', 'assets/pepe.jpg');
-		game.load.image('john', 'assets/john.png');
-      
+		game.load.image('bullet', 'assets/bullet.png');
+
 		game.load.image('sky', 'assets/sky.png');
 		game.load.image('ground', 'assets/platform-pixel.png');
 	},
@@ -44,17 +40,18 @@ mainState.prototype = {
 	create: function() {
 		game.physics.startSystem(Phaser.Physics.ARCADE);
 
-		game.stage.backgroundColor = "#4488AA";
+		// game.stage.backgroundColor = "#4488AA";
 		//livesText = game.add.text(game.world.center-250, game.world.centerY-250, 'Lives = ' + playerLives, { font: '25px Arial', fill: '#ffffff'});
+    game.add.tileSprite(0, 0, 2000, 800, 'background');
 
 		this.map = this.game.add.tilemap('level1');
 		this.map.addTilesetImage('platform', 'gameTiles');
 
-		this.backgroundlayer = this.map.createLayer('background');
+		// this.backgroundlayer = this.map.createLayer('background');
 		this.collisionLayer = this.map.createLayer('collision');
 		this.map.setCollisionBetween(1, 100000, true, 'collision');
-		this.backgroundlayer.resizeWorld();
-        
+		// this.backgroundlayer.resizeWorld();
+
         //game.world.width = (this.game.width * 2);
         //game.world.height = (this.game.height * 2);
 
@@ -87,8 +84,8 @@ mainState.prototype = {
 
 		this.dickass.update();
         this.baddies.update();
-	},   
-    
+	},
+
     render: function() {
         //this.dickass.render();
 		game.debug.text('Lives:' + playerLives, 32, 32);
