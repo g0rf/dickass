@@ -50,7 +50,7 @@ function Baddie(game) {
 
 		}
 
-		if (game.time.now > spawnTimer) {
+		if (game.time.now > spawnTimer && killCount < 10) {
 			spawnEnemies();
 			spawnTimer = game.time.now + 3000;
 		}

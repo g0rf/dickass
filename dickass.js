@@ -79,10 +79,7 @@ function Dickass(game) {
 	// Main update function. Called in gameState update().
 	// Update function for Dickass
 	this.update = function() {
-		console.log('acceleration' + sprite.body.acceleration.y);
-        //console.log('velocity' + sprite.body.velocity.y)
-        console.log(inAir);
-        
+	
     	sprite.body.gravity.y = 10000;    
 		//  Reset the players velocity (movement)
 		sprite.body.velocity.x = 0;

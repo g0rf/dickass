@@ -38,11 +38,12 @@ var enemyBulletTime = 0;
 
 var livingBaddies = [];
 
-var playerLives = 3;
+var playerLives = 5;
 
 //idk if these are even being used lol
 var totalEnemies = 0; 
 var enemiesAlive = 0; 
+var killCount = 0;
 
 var game = new Phaser.Game(1000, 800, Phaser.AUTO, 'content', null);
 
@@ -60,6 +61,7 @@ function startGame() {
 function killBaddie(bullets, baddie) {
     baddie.kill();
     bullets.kill();
+	killCounter();
 }
 
 function killDickass(dickass, baddie) {
@@ -83,11 +85,33 @@ function dickassShot(dickass, baddieBullets) {
 	}
 }
 
+function killBullets(bullets, baddieBullets) {
+	console.log('bullets collided');
+	bullets.kill();
+	baddieBullets.kill();
+	
+}
+
 function gameOverScreen() {
 	//sounds.music.pause();
 	game.state.add('gameOverState', gameOverState, false);
 	game.state.start('gameOverState');
-	
-	
+}
 
+function killCounter() {
+	killCount++;
+	console.log(killCount);
+	if (killCount == 3) {
+		console.log('helo');
+		spawnBoss();
+	}
+}
+
+function spawnBoss() {
+	console.log('boss');
+	boss = game.add.sprite(game.world.centerX + 200, game.world.centerY - 200, 'boss');	
+}
+
+function damageBoss(bullets, boss) {
+	bossHealth--;
 }

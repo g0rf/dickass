@@ -14,7 +14,7 @@ mainState.prototype = {
 	preload: function() { // load assets
 		game.load.tilemap('level1', 'assets/beach.json', null, Phaser.Tilemap.TILED_JSON);
 		game.load.image('gameTiles', 'assets/platform2.png');
-    game.load.image('background', 'assets/bg1.png');
+    	game.load.image('background', 'assets/bg1.png');
 
         if (sfw == true) {
             game.load.image('dickass', 'assets/rat100.png');
@@ -32,6 +32,7 @@ mainState.prototype = {
 
 		//game.load.image('baddie', 'assets/pepe.jpg');
 		game.load.image('bullet', 'assets/bullet.png');
+		game.load.image('boss', 'assets/boss.jpg');
 
 		game.load.image('sky', 'assets/sky.png');
 		game.load.image('ground', 'assets/platform-pixel.png');
@@ -42,7 +43,7 @@ mainState.prototype = {
 
 		// game.stage.backgroundColor = "#4488AA";
 		//livesText = game.add.text(game.world.center-250, game.world.centerY-250, 'Lives = ' + playerLives, { font: '25px Arial', fill: '#ffffff'});
-    game.add.tileSprite(0, 0, 2000, 800, 'background');
+		game.add.tileSprite(0, 0, 2000, 800, 'background');
 
 		this.map = this.game.add.tilemap('level1');
 		this.map.addTilesetImage('platform', 'gameTiles');
@@ -65,6 +66,7 @@ mainState.prototype = {
 		// Create dickass
 		this.dickass = new Dickass(game);
         this.baddies = new Baddie(game);
+		this.boss = new Boss(game);
 		//changed from game.input to this.input. not sure if that does anything
 		cursors = this.input.keyboard.createCursorKeys();
 	},
@@ -79,15 +81,18 @@ mainState.prototype = {
         game.physics.arcade.overlap(this.dickass.sprite, this.baddies.baddies, killDickass, null, this);
         game.physics.arcade.overlap(this.dickass.sprite, this.baddies.baddieBullets, dickassShot, null, this);
 		game.physics.arcade.collide(this.arnold, this.collisionLayer);
-
+		game.physics.arcade.overlap(this.dickass.bullets, this.baddies.baddieBullets, killBullets, null, this);
+		game.physics.arcade.overlap(this.dickass.bullets, this.boss.bullets, damageBoss, null, this);
         game.physics.arcade.collide(this.dickass.sprite, this.arnold);
 
 		this.dickass.update();
         this.baddies.update();
+		this.boss.update();
 	},
 
     render: function() {
         //this.dickass.render();
 		game.debug.text('Lives:' + playerLives, 32, 32);
+		game.debug.text('Kill Count:' + killCount, 32, 52);
     }
 }
