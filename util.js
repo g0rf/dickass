@@ -1,5 +1,6 @@
 'use strict';
 
+
 /* Helper functions */
 
 function contain(sprite, container) {

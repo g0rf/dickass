@@ -1,11 +1,7 @@
-var space = keyboard(32),
-    left = keyboard(37),
-    up = keyboard(38),
-    right = keyboard(39),
-    down = keyboard(40);
+
 // var bullets = [];
 
-var PIGGY_FIRE_RATE = 1800;
+var PIGGY_FIRE_RATE = 2000;
 
 class Piggy {
   constructor(parent, x, y) { // parent: parent container
@@ -35,7 +31,7 @@ class Piggy {
     }
     bulletSprite.x = this.sprite.x + (multiplier * 120);
     bulletSprite.y = this.sprite.y - 20;
-    bulletSprite.vx = multiplier * 2;
+    bulletSprite.vx = multiplier * 6;
     this.parent.addChild(bulletSprite);
 
     // add the sprite to global bullets array so it can be collided

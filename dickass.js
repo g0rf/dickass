@@ -5,10 +5,10 @@ var space = keyboard(32),
     down = keyboard(40);
 // var bullets = [];
 
-var FIRE_RATE = 200; // in ms
-var GRAVITY = 0.1;
-var JETPACK_ACCEL = 0.5;
-var JETPACK_MAX = 6; // top speed
+var FIRE_RATE = 150; // in ms
+var GRAVITY = 0.3;
+var JETPACK_ACCEL = 1;
+var JETPACK_MAX = 8; // top speed
 
 class Rat {
   constructor(parent) { // parent: parent container
@@ -32,6 +32,8 @@ class Rat {
     this.parent = parent;
 
     this._nextFireTime = new Date();
+
+    this.health = 50;
   }
 
   faceLeft() {
@@ -55,7 +57,7 @@ class Rat {
     }
     bulletSprite.x = this.sprite.x + (multiplier * 5);
     bulletSprite.y = this.sprite.y - 5;
-    bulletSprite.vx = multiplier * 10;
+    bulletSprite.vx = multiplier * 15;
     this.parent.addChild(bulletSprite);
 
     // add the sprite to global bullets array so it can be collided
@@ -98,6 +100,12 @@ class Rat {
     if (space.isDown)  {
       this.fire();
     }
+
+    this._debug(`Health: ${this.health}`);
+  }
+
+  hit() {
+    this.health -= 10;
   }
 
   _debug(txt) {
@@ -106,8 +114,8 @@ class Rat {
         txt,
         {font: "12px Futura", fill: "white"}
       );
-      this.message.x = 50;
-      this.message.y = 50;
+      this.message.x = 5;
+      this.message.y = 5;
       this.parent.addChild(this.message);
     } else {
       this.message.text = txt;
