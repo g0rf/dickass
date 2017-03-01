@@ -5,34 +5,25 @@ var space = keyboard(32),
     down = keyboard(40);
 // var bullets = [];
 
-class Rat {
-  constructor(parent) { // parent: parent container
+var PIGGY_FIRE_RATE = 800;
+
+class Piggy {
+  constructor(parent, x, y) { // parent: parent container
     // create a new sprite at center
-    this.sprite = new Sprite(TextureCache['assets/pig.png']);
+    this.sprite = new Sprite(TextureCache['assets/piggy.png']);
+    this.sprite.anchor.set(.5, .5);
+    this.sprite.scale.x = -1;
+
     parent.addChild(this.sprite);
-    this.sprite.vx = 0;
+    this.sprite.vx = -1;
     this.sprite.vy = 0;
 
-    this.sprite.x = 100;
-    this.sprite.y = 100;
+    this.sprite.x = x;
+    this.sprite.y = y;
 
-    // Add our overlay spritesheet as a child, so it always moves with dickass
-    // Frame 0 is empty, so it shows nothing by default
-
-    // Start off facing right. Call it here on creation, to avoid a weird jump thing that happens
-    this.faceRight();
-
-    // this._fireButton = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);;
     this.parent = parent;
-  }
 
-  faceLeft() {
-    this.sprite.anchor.set(.5,.5);
-    this.sprite.scale.x =  -1;
-  }
-  faceRight() {
-    this.sprite.anchor.set(.5,.5);
-    this.sprite.scale.x = 1;
+    this._nextFireTime = new Date().getTime() + PIGGY_FIRE_RATE;
   };
 
   /** Fire a bullet */
@@ -45,8 +36,6 @@ class Rat {
     bulletSprite.x = this.sprite.x; // + (multiplier * 5);
     bulletSprite.y = this.sprite.y;
     bulletSprite.vx = 2;
-    console.log(bulletSprite.x);
-    console.log(bulletSprite.y);
     // bulletSprite.vx = 2 * multiplier;
     this.parent.addChild(bulletSprite);
 
@@ -56,89 +45,14 @@ class Rat {
 
   // Update function for Rat
   update() {
-    //  Reset the players horiz velocity (movement)
-    var sprite = this.sprite;
-    sprite.vx = 0;
-    sprite.vy += 0.1; // gravity;
+    this.sprite.x += this.sprite.vx;
+    this.sprite.y += this.sprite.vy;
 
+    var now = new Date();
 
-    // Movement Stuff
-    if (left.isDown) {
-      //  Move to the left
-      sprite.vx = -5;
-      this.faceLeft();
-      //rocketOverlaySprite.frame = 1; // frame 1 is ROCKET SKATES LMFAO
-
-    } else if (right.isDown) {
-      //  Move to the right
-      sprite.vx = 5;
-      //rocketOverlaySprite.frame = 1;
-      this.faceRight();
-    }
-
-    if (up.isDown) {
-      sprite.vy = Math.max(sprite.vy - .5, -15);
-    }
-
-    sprite.x += sprite.vx;
-    sprite.y += sprite.vy;
-
-    var collideDirection = contain(this.sprite, { x: 0, y: 0, width: WIDTH, height: HEIGHT });
-    if (collideDirection === 'top' || collideDirection === 'bottom') {
-      sprite.vy = 0.1; // reset to gravity
-    }
-
-    // var inAir = true;
-    // //check to see if rat man is in the air
-    // if(sprite.body.blocked.down) {
-    //     inAir = false;
-    // } else {
-    //     inAir = true;
-    // }
-
-
-    //if up is pressed and rat is on the ground, jump and give a boost in acceleration
-    // if (cursors.up.isDown && inAir == false) {
-    //   console.log('ayy');
-    //   sprite.body.velocity.y = -4000;
-    //   sprite.body.acceleration.y += -3000;
-    // } else if(cursors.up.isDown && inAir == true) {
-    //   //otherwise it just uses the jetpack
-    //   sprite.body.acceleration.y += -250;
-    //   sprite.body.velocity.y = -200;
-    //   this.rocketOverlaySprite.frame = 1;
-    // } else if (cursors.down.isDown) {
-    //   // Move down
-    //   sprite.body.acceleration.y +=300;
-    // } else {
-    //   sprite.body.velocity.y = 0;
-    //   this.rocketOverlaySprite.frame = 0;
-    //   if (sprite.body.acceleration.y < 0) {
-    //     sprite.body.acceleration.y += 250;
-    //   }
-    // }
-
-    // if(sprite.body.blocked.up) {
-    //     sprite.body.acceleration.y = 0;
-    // }
-
-    if (space.isDown)  {
+    if (now > this._nextFireTime)  {
       this.fire();
+      this._nextFireTime = now.getTime() + PIGGY_FIRE_RATE;
     }
-  }
-
-  _debug(txt) {
-    if (!this.message) {
-      this.message = new Text(
-        txt,
-        {font: "12px Futura", fill: "white"}
-      );
-      this.message.x = 50;
-      this.message.y = 50;
-      this.parent.addChild(this.message);
-    } else {
-      this.message.text = txt;
-    }
-
   }
 }

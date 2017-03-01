@@ -5,10 +5,16 @@ var space = keyboard(32),
     down = keyboard(40);
 // var bullets = [];
 
+var FIRE_RATE = 200; // in ms
+var GRAVITY = 0.1;
+var JETPACK_ACCEL = 0.5;
+var JETPACK_MAX = 6; // top speed
+
 class Rat {
   constructor(parent) { // parent: parent container
     // create a new sprite at center
     this.sprite = new Sprite(TextureCache['assets/rat100.png']);
+      this.sprite.anchor.set(.5,.5);
     parent.addChild(this.sprite);
     this.sprite.vx = 0;
     this.sprite.vy = 0;
@@ -20,38 +26,42 @@ class Rat {
     // Frame 0 is empty, so it shows nothing by default
 
     // Start off facing right. Call it here on creation, to avoid a weird jump thing that happens
-    this.faceRight();
+    // this.faceRight();
 
     // this._fireButton = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);;
     this.parent = parent;
+
+    this._nextFireTime = new Date();
   }
 
   faceLeft() {
-    this.sprite.anchor.set(.5,.5);
     this.sprite.scale.x =  -1;
   }
   faceRight() {
-    this.sprite.anchor.set(.5,.5);
     this.sprite.scale.x = 1;
   };
 
   /** Fire a bullet */
   fire() {
-    var bulletSprite = new Sprite(TextureCache['assets/egg.png']);
+    var now = new Date();
+    if (now < this._nextFireTime) { // not ready to fire yet
+      return;
+    }
+
+    var bulletSprite = new Sprite(TextureCache['assets/bullet.png']);
     var multiplier = 1;
     if (this.sprite.scale.x !== 1) { // if scale.x is not 1, then he's facing left
       multiplier = -1;
     }
-    bulletSprite.x = this.sprite.x; // + (multiplier * 5);
-    bulletSprite.y = this.sprite.y;
-    bulletSprite.vx = 2;
-    console.log(bulletSprite.x);
-    console.log(bulletSprite.y);
-    // bulletSprite.vx = 2 * multiplier;
+    bulletSprite.x = this.sprite.x + (multiplier * 5);
+    bulletSprite.y = this.sprite.y - 5;
+    bulletSprite.vx = multiplier * 10;
     this.parent.addChild(bulletSprite);
 
     // add the sprite to global bullets array so it can be collided
     bullets.push(bulletSprite);
+
+    this._nextFireTime = now.getTime() + FIRE_RATE;
   };
 
   // Update function for Rat
@@ -59,25 +69,22 @@ class Rat {
     //  Reset the players horiz velocity (movement)
     var sprite = this.sprite;
     sprite.vx = 0;
-    sprite.vy += 0.1; // gravity;
-
+    sprite.vy += GRAVITY; // accelerate a bit for gravity
 
     // Movement Stuff
     if (left.isDown) {
       //  Move to the left
       sprite.vx = -5;
       this.faceLeft();
-      //rocketOverlaySprite.frame = 1; // frame 1 is ROCKET SKATES LMFAO
 
     } else if (right.isDown) {
       //  Move to the right
       sprite.vx = 5;
-      //rocketOverlaySprite.frame = 1;
       this.faceRight();
     }
 
     if (up.isDown) {
-      sprite.vy = Math.max(sprite.vy - .5, -15);
+      sprite.vy = Math.max(sprite.vy - JETPACK_ACCEL, -1 * JETPACK_MAX);
     }
 
     sprite.x += sprite.vx;
@@ -87,40 +94,6 @@ class Rat {
     if (collideDirection === 'top' || collideDirection === 'bottom') {
       sprite.vy = 0.1; // reset to gravity
     }
-
-    // var inAir = true;
-    // //check to see if rat man is in the air
-    // if(sprite.body.blocked.down) {
-    //     inAir = false;
-    // } else {
-    //     inAir = true;
-    // }
-
-
-    //if up is pressed and rat is on the ground, jump and give a boost in acceleration
-    // if (cursors.up.isDown && inAir == false) {
-    //   console.log('ayy');
-    //   sprite.body.velocity.y = -4000;
-    //   sprite.body.acceleration.y += -3000;
-    // } else if(cursors.up.isDown && inAir == true) {
-    //   //otherwise it just uses the jetpack
-    //   sprite.body.acceleration.y += -250;
-    //   sprite.body.velocity.y = -200;
-    //   this.rocketOverlaySprite.frame = 1;
-    // } else if (cursors.down.isDown) {
-    //   // Move down
-    //   sprite.body.acceleration.y +=300;
-    // } else {
-    //   sprite.body.velocity.y = 0;
-    //   this.rocketOverlaySprite.frame = 0;
-    //   if (sprite.body.acceleration.y < 0) {
-    //     sprite.body.acceleration.y += 250;
-    //   }
-    // }
-
-    // if(sprite.body.blocked.up) {
-    //     sprite.body.acceleration.y = 0;
-    // }
 
     if (space.isDown)  {
       this.fire();
