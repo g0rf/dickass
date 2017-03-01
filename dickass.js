@@ -10,9 +10,11 @@ class Rat {
     // create a new sprite at center
     this.sprite = new Sprite(TextureCache['assets/rat100.png']);
     parent.addChild(this.sprite);
-
     this.sprite.vx = 0;
     this.sprite.vy = 0;
+
+    this.sprite.x = 100;
+    this.sprite.y = 100;
 
     // Add our overlay spritesheet as a child, so it always moves with dickass
     // Frame 0 is empty, so it shows nothing by default
@@ -50,19 +52,15 @@ class Rat {
 
     // add the sprite to global bullets array so it can be collided
     bullets.push(bulletSprite);
-
-      console.log('fire');
   };
 
-  // Main update function. Called in gameState update().
-  // Update function for Dickass
+  // Update function for Rat
   update() {
-    var gravity = 10000;
-
     //  Reset the players horiz velocity (movement)
     var sprite = this.sprite;
     sprite.vx = 0;
     sprite.vy += 0.1; // gravity;
+
 
     // Movement Stuff
     if (left.isDown) {
@@ -84,6 +82,12 @@ class Rat {
 
     sprite.x += sprite.vx;
     sprite.y += sprite.vy;
+
+    var collideDirection = contain(this.sprite, { x: 0, y: 0, width: WIDTH, height: HEIGHT });
+    if (collideDirection === 'top' || collideDirection === 'bottom') {
+      sprite.vy = 0.1; // reset to gravity
+    }
+
     // var inAir = true;
     // //check to see if rat man is in the air
     // if(sprite.body.blocked.down) {
@@ -123,47 +127,18 @@ class Rat {
     }
   }
 
-  render() {
-    //mike pls don't delete I just comment these out so they don't show up pls don't delete tho lol
-    //game.debug.spriteInfo(sprite, 32, 32);
-    //game.debug.text(this.bullets, 32, 16);
+  _debug(txt) {
+    if (!this.message) {
+      this.message = new Text(
+        txt,
+        {font: "12px Futura", fill: "white"}
+      );
+      this.message.x = 50;
+      this.message.y = 50;
+      this.parent.addChild(this.message);
+    } else {
+      this.message.text = txt;
+    }
+
   }
-}
-
-//The `keyboard` helper function
-function keyboard(keyCode) {
-  var key = {};
-  key.code = keyCode;
-  key.isDown = false;
-  key.isUp = true;
-  key.press = undefined;
-  key.release = undefined;
-  //The `downHandler`
-  key.downHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isUp && key.press) key.press();
-      key.isDown = true;
-      key.isUp = false;
-    }
-    event.preventDefault();
-  };
-
-  //The `upHandler`
-  key.upHandler = function(event) {
-    if (event.keyCode === key.code) {
-      if (key.isDown && key.release) key.release();
-      key.isDown = false;
-      key.isUp = true;
-    }
-    event.preventDefault();
-  };
-
-  //Attach event listeners
-  window.addEventListener(
-    "keydown", key.downHandler.bind(key), false
-  );
-  window.addEventListener(
-    "keyup", key.upHandler.bind(key), false
-  );
-  return key;
 }
