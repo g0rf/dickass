@@ -36,6 +36,7 @@ var bullets;
 var piggyBullets;
 var piggies;
 var rat;
+var score, scoreMsg;
 
 var spawnRate = 4000; // after 4 secs spawn a piggy
 var nextSpawn = new Date().getTime() + spawnRate;
@@ -61,14 +62,12 @@ function init() {
   stage.addChild(gameOverScene);
 
   //Create the text sprite and add it to the `gameOver` scene
-  message = new Text(
-      "u suk\npress down to try again",
+  message = new Text('',
       {font: "64px Futura", fill: "white"}
   );
   message.x = 120;
   message.y = stage.height / 2 - 32;
   gameOverScene.addChild(message);
-
 }
 
 /** Setup of normal play state */
@@ -77,6 +76,7 @@ function playSetup() {
   bullets = [];
   piggyBullets = [];
   piggies = [];
+  score = 0;
 
   //Make the game scene and add it to the stage
   gameScene = new Container();
@@ -103,6 +103,15 @@ function playSetup() {
   fpsDisplay.x = 10;
   fpsDisplay.y = HEIGHT - 20;
   gameScene.addChild(fpsDisplay);
+
+
+  scoreMsg = new Text(
+      `Score: 0`,
+      {font: "12px Futura", fill: "white"}
+  );
+  scoreMsg.x = WIDTH - 100;
+  scoreMsg.y = 10;
+  gameScene.addChild(scoreMsg);
 
   //Set the game state
   state = play;
@@ -164,6 +173,7 @@ function play() {
         piggies.splice(piggyIndex, 1);
         hitPiggy = true;
         piggy.kill();
+        score += 100;
 
         spawnRate = Math.max(spawnRate / 2, 1000);
       }
@@ -225,6 +235,9 @@ function play() {
     frames = 0;
     secondTick = now;
   }
+
+  // show score
+  scoreMsg.text = `Score: ${score}`;
 }
 
 /** Listen for spacebar, restart on press */
@@ -240,5 +253,6 @@ function end() {
   gameScene.visible = false;
   gameOverScene.visible = true;
 
+  message.text = `u suk\nscore: ${score}\npress down to try again`,
   state = gameOver;
 }

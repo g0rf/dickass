@@ -32,6 +32,7 @@ class Rat {
     this.parent = parent;
 
     this._nextFireTime = new Date();
+    this._reloaded; // when space goes up, allow another shot
 
     this.health = 50;
   }
@@ -97,8 +98,11 @@ class Rat {
       sprite.vy = 0.1; // reset to gravity
     }
 
-    if (space.isDown)  {
+    if (space.isDown && this._reloaded)  {
       this.fire();
+      this._reloaded = false;
+    } else if (space.isUp) {
+      this._reloaded = true;
     }
 
     this._debug(`Health: ${this.health}`);
