@@ -38,7 +38,7 @@ var piggyBullets;
 var piggies;
 var rat;
 var score, scoreMsg;
-var healthPack;
+var hearts;
 
 var spawnRate = 4000; // after 4 secs spawn a piggy
 var nextSpawn = new Date().getTime() + spawnRate;
@@ -78,6 +78,7 @@ function playSetup() {
   bullets = [];
   piggyBullets = [];
   piggies = [];
+  hearts = [];
   score = 0;
 
   //Make the game scene and add it to the stage
@@ -156,7 +157,7 @@ function play() {
   piggies.forEach(function(piggy) {
       piggy.update();
   });
-
+  
   bullets.forEach(function(bullet, index) {
     bullet.x += bullet.vx;
     // if bullet hits a wall, destroy it
@@ -202,7 +203,11 @@ function play() {
       rat.hit();
     }
   });
-
+  
+  hearts.forEach(function(heart, index){
+      heart.x += heart.vx;
+  });
+ 
   // if piggy collide with rat then game over
   piggies.forEach(function(piggy, index) {
     if (hitTestRectangle(piggy.sprite, rat.sprite)) {
@@ -216,7 +221,7 @@ function play() {
     piggies.push(new Piggy(gameScene, 900, randomInt(10, 550)));
     nextSpawn = now.getTime() + spawnRate;
   }
-
+  
   // scroll bg
   beach.x -= 1;
   beach2.x -= 1;

@@ -39,19 +39,28 @@ class Piggy {
   }
 
   kill() {
-	  var healthPack = new Sprite(TextureCache['assets/heart.png']);
-	  healthPack.x = this.sprite.x;
-	  healthPack.y = this.sprite.y;
-	  healthPack.vx += 10;
-	  this.parent.addChild(healthPack);
+      
+      var heart = new Sprite(TextureCache['assets/heart.png']);
+	  heart.x = this.sprite.x;
+	  heart.y = this.sprite.y;
+      heart.vx = -5;
 	  this.sprite.destroy();
-	
-	
+      
+      //rolls a random number between 0 and 100. if the number is over 70, a heart spawns on piggy death
+      var heartSpawner = randomInt(0, 100);
+      if (heartSpawner > 70){
+          this.parent.addChild(heart);
+          hearts.push(heart);
+          
+      }
+      console.log(heartSpawner);
   }
 
   update() {
     this.sprite.x += this.sprite.vx;
     this.sprite.y += this.sprite.vy;
+    
+    
 
     // var collideDirection = contain(this.sprite, { x: 0, y: 0, width: WIDTH, height: HEIGHT });
     // if (collideDirection === 'left' || collideDirection === 'right') {
