@@ -39,7 +39,14 @@ class Piggy {
   }
 
   kill() {
-    this.sprite.destroy();
+	  var healthPack = new Sprite(TextureCache['assets/heart.png']);
+	  healthPack.x = this.sprite.x;
+	  healthPack.y = this.sprite.y;
+	  healthPack.vx += 10;
+	  this.parent.addChild(healthPack);
+	  this.sprite.destroy();
+	
+	
   }
 
   update() {

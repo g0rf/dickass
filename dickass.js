@@ -14,7 +14,7 @@ class Rat {
   constructor(parent) { // parent: parent container
     // create a new sprite at center
     this.sprite = new Sprite(TextureCache['assets/rat100.png']);
-      this.sprite.anchor.set(.5,.5);
+    this.sprite.anchor.set(.5,.5);
     parent.addChild(this.sprite);
     this.sprite.vx = 0;
     this.sprite.vy = 0;

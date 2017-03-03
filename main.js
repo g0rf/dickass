@@ -24,7 +24,8 @@ loader
     "assets/rat100.png",
     "assets/piggy.png",
     "assets/bullet.png",
-    "assets/egg.png"
+	"assets/egg.png",
+	"assets/heart.png"
   ])
   .load(init);
 
@@ -37,6 +38,7 @@ var piggyBullets;
 var piggies;
 var rat;
 var score, scoreMsg;
+var healthPack;
 
 var spawnRate = 4000; // after 4 secs spawn a piggy
 var nextSpawn = new Date().getTime() + spawnRate;
