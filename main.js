@@ -204,9 +204,17 @@ function play() {
     }
   });
   
-  hearts.forEach(function(heart, index){
+  //make the hearts move
+  hearts.forEach(function(heart, index) {
       heart.x += heart.vx;
+	  if(hitTestRectangle(heart, rat.sprite)) {
+		  hearts.splice(index, 1);
+		  heart.destroy();
+		  rat.health += 10;
+	  }
   });
+	
+
  
   // if piggy collide with rat then game over
   piggies.forEach(function(piggy, index) {
