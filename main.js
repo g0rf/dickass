@@ -26,7 +26,8 @@ loader
     "assets/bullet.png",
 	"assets/egg.png",
 	"assets/heart.png",
-	"assets/cheese.png"
+	"assets/cheese.png",
+    "assets/cheeseman.png"
   ])
   .load(init);
 
@@ -41,6 +42,8 @@ var rat;
 var score, scoreMsg;
 var hearts;
 var currency;
+var currencyAmt, currencyMsg;
+currencyAmt = 0;
 
 var spawnRate = 4000; // after 4 secs spawn a piggy
 var nextSpawn = new Date().getTime() + spawnRate;
@@ -69,9 +72,10 @@ function init() {
   message = new Text('',
       {font: "64px Futura", fill: "white"}
   );
-  message.x = 120;
-  message.y = stage.height / 2 - 32;
+  message.x = 100;
+  message.y = stage.height / 3;
   gameOverScene.addChild(message);
+    
 }
 
 /** Setup of normal play state */
@@ -83,6 +87,7 @@ function playSetup() {
   hearts = [];
   currency = [];
   score = 0;
+  
 
   //Make the game scene and add it to the stage
   gameScene = new Container();
@@ -119,6 +124,14 @@ function playSetup() {
   scoreMsg.y = 10;
   gameScene.addChild(scoreMsg);
 
+  currencyMsg = new Text( 
+      `Currency: 0`, 
+      {font: "12px Futura", fill: "white"}
+  );
+  currencyMsg.x = WIDTH/2;
+  currencyMsg.y = 10;
+  gameScene.addChild(currencyMsg);
+    
   //Set the game state
   state = play;
 }
@@ -215,11 +228,21 @@ function play() {
 		  heart.destroy();
 		  rat.health += 10;
 	  }
+      
+      var hitWall = contain(heart, { x:0, y:0, width: WIDTH, height: HEIGHT });
+      if (hitWall) {
+          hearts.splice(index, 1);
+          heart.destroy();
+      }
   });
 	
   currency.forEach(function(cheese, index) {
 	  cheese.x += cheese.vx;
-	  
+	  if(hitTestRectangle(cheese, rat.sprite)) {
+          currency.splice(index, 1);
+          cheese.destroy();
+          currencyAmt++;
+      }
   })
  
   // if piggy collide with rat then game over
@@ -259,21 +282,52 @@ function play() {
 
   // show score
   scoreMsg.text = `Score: ${score}`;
+    
+  //show currency
+  currencyMsg.text = `Cheese: ${currencyAmt}`;
+  
+  
 }
 
+/** Show game over text and swich to gameOver loop */
+
+
+function end() {
+  gameScene.visible = false;
+  gameOverScene.visible = true;
+  
+  message.text = `u suk\nscore: ${score}\ncurrency: ${currencyAmt}\npress down to try again`;
+  
+  setInterval("displayCheeseMan()", 1000);
+  setInterval("displayCheeseManMsg()", 1400);
+  
+  state = gameOver;
+    
+  console.log(displayCheeseMan);
+  console.log(gameOver);
+}
+
+/* can't figure out how to make dude have a delay before showing up after game is restarted... clearInterval didn't work*/
+function displayCheeseMan() {
+
+    var cheeseMan = new Sprite(TextureCache['assets/cheeseman.png']); 
+    gameOverScene.addChild(cheeseMan);
+    cheeseMan.x = 550;
+    cheeseMan.y = 70;
+}
+
+function displayCheeseManMsg() {
+    var cheeseManMsg = new Text('Got any cheese?', {font: "18px Futura", fill:"white"});
+    gameOverScene.addChild(cheeseManMsg);
+    cheeseManMsg.x = 480;
+    cheeseManMsg.y = 60;
+}
 /** Listen for spacebar, restart on press */
+
 function gameOver() {
   if (down.isDown) {
     gameScene.destroy({ children: true });
     playSetup();
+    
   }
-}
-
-/** Show game over text and swich to gameOver loop */
-function end() {
-  gameScene.visible = false;
-  gameOverScene.visible = true;
-
-  message.text = `u suk\nscore: ${score}\npress down to try again`,
-  state = gameOver;
 }
