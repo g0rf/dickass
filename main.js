@@ -25,7 +25,8 @@ loader
     "assets/piggy.png",
     "assets/bullet.png",
 	"assets/egg.png",
-	"assets/heart.png"
+	"assets/heart.png",
+	"assets/cheese.png"
   ])
   .load(init);
 
@@ -39,6 +40,7 @@ var piggies;
 var rat;
 var score, scoreMsg;
 var hearts;
+var currency;
 
 var spawnRate = 4000; // after 4 secs spawn a piggy
 var nextSpawn = new Date().getTime() + spawnRate;
@@ -79,6 +81,7 @@ function playSetup() {
   piggyBullets = [];
   piggies = [];
   hearts = [];
+  currency = [];
   score = 0;
 
   //Make the game scene and add it to the stage
@@ -214,7 +217,10 @@ function play() {
 	  }
   });
 	
-
+  currency.forEach(function(cheese, index) {
+	  cheese.x += cheese.vx;
+	  
+  })
  
   // if piggy collide with rat then game over
   piggies.forEach(function(piggy, index) {

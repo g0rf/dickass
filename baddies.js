@@ -41,11 +41,18 @@ class Piggy {
   kill() {
       
       var heart = new Sprite(TextureCache['assets/heart.png']);
+	  var cheese = new Sprite(TextureCache['assets/cheese.png']);
 	  heart.x = this.sprite.x;
 	  heart.y = this.sprite.y;
       heart.vx = -5;
+	  cheese.x = this.sprite.x;
+	  cheese.y = this.sprite.y;
+	  cheese.vx = -3;
 	  this.sprite.destroy();
       
+	  
+	  this.parent.addChild(cheese);
+	  currency.push(cheese);
       //rolls a random number between 0 and 100. if the number is over 70, a heart spawns on piggy death
       var heartSpawner = randomInt(0, 100);
       if (heartSpawner > 70){
@@ -53,6 +60,7 @@ class Piggy {
           hearts.push(heart);
           
       }
+	  
       console.log(heartSpawner);
   }
 
