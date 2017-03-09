@@ -62,20 +62,6 @@ function init() {
 
   //Start the game loop
   gameLoop();
-
-  //Create the `gameOver` scene
-  gameOverScene = new Container();
-  gameOverScene.visible = false;
-  stage.addChild(gameOverScene);
-
-  //Create the text sprite and add it to the `gameOver` scene
-  message = new Text('',
-      {font: "64px Futura", fill: "white"}
-  );
-  message.x = 100;
-  message.y = stage.height / 3;
-  gameOverScene.addChild(message);
-    
 }
 
 /** Setup of normal play state */
@@ -246,11 +232,16 @@ function play() {
   })
  
   // if piggy collide with rat then game over
+  var hitPiggy = false;
   piggies.forEach(function(piggy, index) {
     if (hitTestRectangle(piggy.sprite, rat.sprite)) {
-      end();
+      hitPiggy = true;
     }
   });
+  if (hitPiggy) {
+    end();
+    return;
+  }
 
   // spawn a piggy if it's time to do so
   var now = new Date();
@@ -285,26 +276,33 @@ function play() {
     
   //show currency
   currencyMsg.text = `Cheese: ${currencyAmt}`;
-  
-  
 }
 
 /** Show game over text and swich to gameOver loop */
 
 
 function end() {
+  console.log('end  called');
   gameScene.visible = false;
-  gameOverScene.visible = true;
-  
-  message.text = `u suk\nscore: ${score}\ncurrency: ${currencyAmt}\npress down to try again`;
-  
-  setInterval("displayCheeseMan()", 1000);
-  setInterval("displayCheeseManMsg()", 1400);
-  
+
+  //Create the `gameOver` scene
+  gameOverScene = new Container();
+  stage.addChild(gameOverScene);
+
+  //Create the text sprite and add it to the `gameOver` scene
+  message = new Text(
+      `u suk\nscore: ${score}\ncurrency: ${currencyAmt}\npress down to try again`,
+      { font: "64px Futura", fill: "white" }
+  );
+
+  message.x = 100;
+  message.y = stage.height / 2;
+  gameOverScene.addChild(message);
+
+  setTimeout(displayCheeseMan, 1000);
+  setTimeout(displayCheeseManMsg, 1400);
+
   state = gameOver;
-    
-  console.log(displayCheeseMan);
-  console.log(gameOver);
 }
 
 /* can't figure out how to make dude have a delay before showing up after game is restarted... clearInterval didn't work*/
@@ -327,7 +325,7 @@ function displayCheeseManMsg() {
 function gameOver() {
   if (down.isDown) {
     gameScene.destroy({ children: true });
+    gameOverScene.destroy({ children: true });
     playSetup();
-    
   }
 }
