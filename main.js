@@ -306,12 +306,18 @@ function end() {
 }
 
 /* can't figure out how to make dude have a delay before showing up after game is restarted... clearInterval didn't work*/
-function displayCheeseMan() {
+var cheeseMan;
+//document.addEventListener("click", openShop);
 
-    var cheeseMan = new Sprite(TextureCache['assets/cheeseman.png']); 
+function displayCheeseMan() {
+    cheeseMan = new Sprite(TextureCache['assets/cheeseman.png']);
     gameOverScene.addChild(cheeseMan);
     cheeseMan.x = 550;
     cheeseMan.y = 70;
+//    document.addEventListener("click", openShop);
+    cheeseMan.interactive = true;
+    cheeseMan.buttonMode = true;
+    cheeseMan.on('click', openShop);
 }
 
 function displayCheeseManMsg() {
@@ -319,8 +325,15 @@ function displayCheeseManMsg() {
     gameOverScene.addChild(cheeseManMsg);
     cheeseManMsg.x = 480;
     cheeseManMsg.y = 60;
+    
+    var shopMsg = new Text('Click on mr. cheeseman to go to the shop!', {font: "14px Futura", fill:"white"});
+    gameOverScene.addChild(shopMsg);
+    shopMsg.x = 500;
+    shopMsg.y = 400;                                                             
 }
 /** Listen for spacebar, restart on press */
+
+
 
 function gameOver() {
   if (down.isDown) {
@@ -329,3 +342,28 @@ function gameOver() {
     playSetup();
   }
 }
+
+function openShop() {
+    console.log("fuk");
+    gameScene.destroy({ children: true });
+    gameOverScene.destroy({ children: true });
+    
+    shopScene = new Container();
+    stage.addChild(shopScene);
+    
+    var shopSign = new Text('YE OLDE SHOPPE', {font: "60px Comic Sans MS", fill:"white"});
+    shopScene.addChild(shopSign);
+    shopSign.x = 200;
+    shopSign.y = 100;
+    
+    cheeseMan = new Sprite(TextureCache['assets/cheeseman.png']);
+    shopScene.addChild(cheeseMan);
+    cheeseMan.x = 200;
+    cheeseMan.y = 200;
+    
+    var waddaya = new Text('waaddaya buyin?', {font: "20px Copperplate Gothic Light", fill:"white"});
+    shopScene.addChild(waddaya);
+    waddaya.x = 250;
+    waddaya.y = 300;
+}
+
