@@ -77,6 +77,7 @@ function init() {
   titleScreenSetup();
   //Start the game loop
   gameLoop();
+
 }
 
 function titleScreenSetup() {
@@ -108,7 +109,7 @@ function titleScreenSetup() {
 	
 	
 	state = title;
-	
+
 }
 
 
