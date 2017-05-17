@@ -93,7 +93,7 @@ class Rat {
     sprite.x += sprite.vx;
     sprite.y += sprite.vy;
 
-    var collideDirection = contain(this.sprite, { x: 0, y: 0, width: WIDTH, height: HEIGHT });
+    var collideDirection = contain(this.sprite, { x: 0, y: 30, width: WIDTH, height: HEIGHT - 30 });
     if (collideDirection === 'top' || collideDirection === 'bottom') {
       sprite.vy = 0.1; // reset to gravity
     }
@@ -116,10 +116,10 @@ class Rat {
     if (!this.message) {
       this.message = new Text(
         txt,
-        {font: "12px Futura", fill: "white"}
+        {font: "16px Futura", fill: "green"}
       );
-      this.message.x = 5;
-      this.message.y = 5;
+      this.message.x = 10;
+      this.message.y = 580;
       this.parent.addChild(this.message);
     } else {
       this.message.text = txt;
