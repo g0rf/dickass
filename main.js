@@ -202,7 +202,7 @@ function gameLoop() {
     lastDraw = now - (delta % interval);
 
     //Update the current game state
-    state;
+    state();
 
     //Render the stage
     renderer.render(stage);
