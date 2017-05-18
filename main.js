@@ -108,7 +108,7 @@ function titleScreenSetup() {
 	playButton.on('click', playSetup);
 	
 	
-	state = title;
+	state = titleState;
 
 }
 
@@ -201,6 +201,8 @@ function gameLoop() {
   if (delta > interval) {
     lastDraw = now - (delta % interval);
 
+    console.log(state);
+
     //Update the current game state
     state();
 
@@ -209,7 +211,7 @@ function gameLoop() {
   }
 }
 
-function title() {
+function titleState() {
 	title.text = `Rat Bastard`;
 	
 	if(1 === 1) {
